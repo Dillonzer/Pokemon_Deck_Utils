@@ -1,0 +1,84 @@
+.topbanner {
+    height: 200px;    
+    background-color: #283C7E;
+    font-size: xx-large;
+    font-weight: bolder;
+    color: white;
+    -webkit-text-stroke-color: black;
+    -webkit-text-stroke-width: 3px;
+    text-align: center;
+    padding-top: 30px;
+    border-color: #CD8F00;
+    border-style: solid;
+    border-bottom-color: #111111;
+  }
+  
+  body {
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: large;
+    }
+  
+  .mainBody {
+      padding-top: 25px;
+      padding-bottom: 50px;
+  }
+  
+  .navbar ul {
+      list-style-type: none;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background-color: #283C7E;
+      border-color: #CD8F00;
+      border-style: solid;
+      border-top-color: #111111;
+    }
+    
+    .navbar li {
+      float: left;
+    }
+    
+    .navbar li a {
+      display: block;
+      color: white;
+      text-align: center;
+      padding: 14px 16px;
+      text-decoration: none;
+    }
+    
+    /* Change the link color to #111 (black) on hover */
+    .navbar li a:hover {
+      background-color: #344780;
+    }
+  
+    .active {
+      background-color: #06237A;
+    }
+  
+    .anchorButton {
+      display: block;
+      width: 275px;
+      height: 20px;
+      background: #283C7E;
+      border-radius: 100px;
+      border-style: solid;
+      border-color: #CD8F00;
+      padding: 10px;
+      text-align: center;
+      color: white;
+      font-weight: bold;
+      line-height: 25px; 
+      text-decoration: none;
+    }
+  
+    .anchorButton:hover {    
+      background: #344780;
+    }
+  
+    .footer {
+        border-top: #111111;
+        border-right: #FFFFFF;
+        border-left:  #FFFFFF;
+        border-bottom:  #FFFFFF;
+        border-style: solid;
+    }
