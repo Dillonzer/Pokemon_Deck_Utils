@@ -62,7 +62,7 @@ function CreateDecklistObject(decklistText)
     redirect: 'follow'
     };
 
-    fetch("https://dev-ptcg-api.herokuapp.com/prizeTracker/generateDecklist", requestOptions)
+    fetch("https://ptcg-api.herokuapp.com/prizeTracker/generateDecklist", requestOptions)
     .then(response => {
         return response.json()
         })
@@ -200,7 +200,7 @@ function GetDecklistCardInformation(decklistCard)
     redirect: 'follow'
     };
 
-    return fetch("https://dev-ptcg-api.herokuapp.com/prizeTracker/getCardInformation", requestOptions)
+    return fetch("https://ptcg-api.herokuapp.com/prizeTracker/getCardInformation", requestOptions)
     .then(response => {
         return response.json()
         })
