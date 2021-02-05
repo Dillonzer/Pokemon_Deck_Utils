@@ -285,6 +285,7 @@ function TakePrizeCard(prizeCardId)
 
 function ResetPrizeCards()
 {     
+    prizeCards = []
     var prizeCard1 = document.getElementById('prize1');
     var prizeCard2 = document.getElementById('prize2');
     var prizeCard3 = document.getElementById('prize3');
