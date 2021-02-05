@@ -82,3 +82,23 @@
         border-bottom:  #FFFFFF;
         border-style: solid;
     }
+
+    #prizeselectortable td {
+      position:relative;
+    }
+    #prizeselectortable span {
+      position:absolute;
+      right:10px;
+      bottom:10px;
+      z-index:10;
+      padding:10px 15px;
+      border-radius:50%;
+      background:blue;
+      color:white;
+      font-size:1.5em;
+    }
+
+    .card {
+      height: 200px;
+      width: 150px
+    }

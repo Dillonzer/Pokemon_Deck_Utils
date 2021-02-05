@@ -4,6 +4,7 @@
 <link rel="shortcut icon" type="image/jpg" href="./images/Logo.png"/>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="style.css">
+<script src="scripts.js"></script>
 <body>
 <div class="topbanner">
     <h1>Prize Tracker</h1>
@@ -18,7 +19,7 @@
     <div>
         <label for="decklist">Please post your decklist here:</label><br /><br />
         <textarea id="decklist" style="height: 512px; width: 350px;"></textarea><br/>
-        <button id="submitDecklist">Submit Decklist</button>
+        <button id="submitDecklist" onclick="CreatePrizeSelectorTable()">Submit Decklist</button>
     </div>
     <div id="prizeSelector" style="flex: 1;">
         <table id="prizeselectortable">
