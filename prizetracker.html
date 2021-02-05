@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="style.css">
 <script src="scripts.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <body>
 <div class="topbanner">
     <h1>Prize Tracker</h1>
@@ -18,16 +19,13 @@
 <div class="mainBody" style="display: flex">
     <div>
         <label for="decklist">Please post your decklist here:</label><br /><br />
-        <textarea id="decklist" style="height: 512px; width: 350px;"></textarea><br/>
-        <button id="submitDecklist" onclick="CreatePrizeSelectorTable()">Submit Decklist</button>
+        <textarea id="decklist" style="height: 512px; width: 350px;;"></textarea><br/>
+        <button id="submitDecklist" onclick="SubmitDecklist()">Submit Decklist</button>
     </div>
-    <div id="prizeSelector" style="flex: 1;">
-        <table id="prizeselectortable">
-
-        </table>
+    <div id="prizeSelector" style="flex: 1; padding-left: 50px;">
+        <table id="prizeselectortable"></table>
     </div>
-    <div id="prizeCards" style="flex: 2;">
-        <p>TEST2</p>
+    <div id="prizeCards" style="flex: 1; visibility: hidden;">
     </div>
 </div>
 <div class="footer">

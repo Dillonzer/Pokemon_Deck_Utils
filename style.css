@@ -1,16 +1,15 @@
 .topbanner {
-    height: 200px;    
+    height: 120px;
     background-color: #283C7E;
     font-size: xx-large;
-    font-weight: bolder;
+    font-weight: bold;
     color: white;
     -webkit-text-stroke-color: black;
     -webkit-text-stroke-width: 3px;
-    text-align: center;
-    padding-top: 30px;
     border-color: #CD8F00;
     border-style: solid;
     border-bottom-color: #111111;
+    padding-left: 5px;
   }
   
   body {
@@ -86,6 +85,7 @@
     #prizeselectortable td {
       position:relative;
     }
+
     #prizeselectortable span {
       position:absolute;
       right:10px;
@@ -93,12 +93,12 @@
       z-index:10;
       padding:10px 15px;
       border-radius:50%;
-      background:blue;
+      background:#283C7E;
       color:white;
       font-size:1.5em;
     }
 
     .card {
-      height: 200px;
-      width: 150px
+      height: 150px;
+      width: 100px
     }
