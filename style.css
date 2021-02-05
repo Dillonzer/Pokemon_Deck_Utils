@@ -1,5 +1,6 @@
 .topbanner {
     height: 120px;
+    width: auto;
     background-color: #283C7E;
     font-size: xx-large;
     font-weight: bold;
@@ -9,12 +10,14 @@
     border-color: #CD8F00;
     border-style: solid;
     border-bottom-color: #111111;
-    padding-left: 5px;
+    padding-left: 5px; 
   }
   
   body {
       font-family: Arial, Helvetica, sans-serif;
       font-size: large;
+      overflow-x: auto;
+      overflow-y: auto;
     }
   
   .mainBody {
@@ -94,11 +97,20 @@
       padding:10px 15px;
       border-radius:50%;
       background:#283C7E;
+      border-color: #CD8F00;
+      border-style: solid;
       color:white;
       font-size:1.5em;
+      pointer-events:none;   
     }
 
     .card {
       height: 150px;
       width: 100px
+    }
+
+    .prizeCard {
+      
+      height: 225px;
+      width: 150px;
     }

@@ -31,8 +31,17 @@ function Card(name, set, number, imageLink)
     this.ImageLink = imageLink
 }
 
+function PrizeCard(image, taken)
+{
+    this.Image = image
+    this.Taken = taken
+}
+
+var prizeCards = []
+
 function SubmitDecklist() {   
     
+    ResetPrizeCards()
     var decklistText = document.getElementById('decklist').value;
     CreateDecklistObject(decklistText)    
 }
@@ -114,6 +123,7 @@ async function CreatePrizeSelectorTable(decklist)
             var cardAmountSpan = document.createElement('span');//CREATE CARD AMOUNT SPAN
             cardImage.src = card.ImageLink
             cardImage.className = "card"
+            cardImage.onclick =  function () {SetPrizeCards(card, cardAmountSpan)}
             cardAmountSpan.innerHTML = decklist.Pokemon[i].Number
             td.appendChild(cardImage);
             td.appendChild(cardAmountSpan);
@@ -139,6 +149,7 @@ async function CreatePrizeSelectorTable(decklist)
             var cardAmountSpan = document.createElement('span');//CREATE CARD AMOUNT SPAN
             cardImage.src = card.ImageLink
             cardImage.className = "card"
+            cardImage.onclick =  function () {SetPrizeCards(card, cardAmountSpan)}
             cardAmountSpan.innerHTML = decklist.Trainers[i].Number
             td.appendChild(cardImage);
             td.appendChild(cardAmountSpan);
@@ -164,6 +175,7 @@ async function CreatePrizeSelectorTable(decklist)
             var cardAmountSpan = document.createElement('span');//CREATE CARD AMOUNT SPAN
             cardImage.src = card.ImageLink
             cardImage.className = "card"
+            cardImage.onclick = function () {SetPrizeCards(card, cardAmountSpan)}
             cardAmountSpan.innerHTML = decklist.Energy[i].Number
             td.appendChild(cardImage);
             td.appendChild(cardAmountSpan);
@@ -201,4 +213,95 @@ function GetDecklistCardInformation(decklistCard)
         return card        
     })
     .catch(error => console.log('error', error));
+}
+
+function SetPrizeCards(card, cardAmountSpan)
+{
+
+    if(Number(cardAmountSpan.innerHTML) == 0)
+    {
+        alert("Invalid Selection due to count in Deck.")
+        return;
+    }
+    
+    if(prizeCards.length < 6)
+    {        
+        var countInDeck = Number(cardAmountSpan.innerHTML) - 1
+        cardAmountSpan.innerHTML = countInDeck
+        prizeCards.push(new PrizeCard(card.ImageLink, false))
+    }
+    else
+    {
+        alert("Max amount of 6 Prize Cards")
+        return
+    }
+
+    var prizeCard1 = document.getElementById('prize1');
+    var prizeCard2 = document.getElementById('prize2');
+    var prizeCard3 = document.getElementById('prize3');
+    var prizeCard4 = document.getElementById('prize4');
+    var prizeCard5 = document.getElementById('prize5');
+    var prizeCard6 = document.getElementById('prize6');
+
+    if (prizeCards.length == 1)
+    {
+        prizeCard1.src = prizeCards[0]["Image"]
+    }
+    else if (prizeCards.length == 2)
+    {
+        prizeCard2.src = prizeCards[1]["Image"]
+    }
+    if (prizeCards.length == 3)
+    {
+        prizeCard3.src = prizeCards[2]["Image"]
+    }
+    else if (prizeCards.length == 4)
+    {
+        prizeCard4.src = prizeCards[3]["Image"]
+    }
+    if (prizeCards.length == 5)
+    {
+        prizeCard5.src = prizeCards[4]["Image"]
+    }
+    else if (prizeCards.length == 6)
+    {
+        prizeCard6.src = prizeCards[5]["Image"]
+    }
+}
+
+function TakePrizeCard(prizeCardId)
+{
+    var prizeCard = document.getElementById(prizeCardId)
+
+    if(prizeCard.style.opacity == 0.15)
+    {
+        prizeCard.style.opacity = ""
+    }
+    else
+    {
+        prizeCard.style.opacity= "15%"
+    }
+}
+
+function ResetPrizeCards()
+{     
+    var prizeCard1 = document.getElementById('prize1');
+    var prizeCard2 = document.getElementById('prize2');
+    var prizeCard3 = document.getElementById('prize3');
+    var prizeCard4 = document.getElementById('prize4');
+    var prizeCard5 = document.getElementById('prize5');
+    var prizeCard6 = document.getElementById('prize6');
+
+    prizeCard1.src = "./images/default-card-image.png"
+    prizeCard1.style.opacity = ""
+    prizeCard2.src = "./images/default-card-image.png"
+    prizeCard2.style.opacity = ""
+    prizeCard3.src = "./images/default-card-image.png"
+    prizeCard3.style.opacity = ""
+    prizeCard4.src = "./images/default-card-image.png"
+    prizeCard4.style.opacity = ""
+    prizeCard5.src = "./images/default-card-image.png"
+    prizeCard5.style.opacity = ""
+    prizeCard6.src = "./images/default-card-image.png"
+    prizeCard6.style.opacity = ""
 }

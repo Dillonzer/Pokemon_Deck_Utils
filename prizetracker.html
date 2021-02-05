@@ -19,13 +19,25 @@
 <div class="mainBody" style="display: flex">
     <div>
         <label for="decklist">Please post your decklist here:</label><br /><br />
-        <textarea id="decklist" style="height: 512px; width: 350px;;"></textarea><br/>
-        <button id="submitDecklist" onclick="SubmitDecklist()">Submit Decklist</button>
+        <textarea id="decklist" style="height: 512px; width: 350px;"></textarea><br/>
+        <a id="submitDecklist" onclick="SubmitDecklist()" class="anchorButton">Submit Decklist</a>
     </div>
-    <div id="prizeSelector" style="flex: 1; padding-left: 50px;">
-        <table id="prizeselectortable"></table>
+    <div id="prizeCards" style="flex: 1; padding-left: 50px; padding-top: 39px;">        
+        <table id="prizeCards">
+            <tr>
+                <td><img id="prize1" src="images/default-card-image.png" class="prizeCard" onclick="TakePrizeCard(this.id)"/></td>
+                <td><img id="prize2" src="images/default-card-image.png" class="prizeCard" onclick="TakePrizeCard(this.id)"/></td>
+                <td><img id="prize3" src="images/default-card-image.png" class="prizeCard" onclick="TakePrizeCard(this.id)"/></td>
+            </tr>
+            <tr>
+                <td><img id="prize4" src="images/default-card-image.png" class="prizeCard" onclick="TakePrizeCard(this.id)"/></td>
+                <td><img id="prize5" src="images/default-card-image.png" class="prizeCard" onclick="TakePrizeCard(this.id)"/></td>
+                <td><img id="prize6" src="images/default-card-image.png" class="prizeCard" onclick="TakePrizeCard(this.id)"/></td>
+            </tr>
+        </table>
     </div>
-    <div id="prizeCards" style="flex: 1; visibility: hidden;">
+    <div id="prizeSelector" style="flex: 1; padding-top: 39px;">
+        <table id="prizeselectortable" style="padding-right:50px"></table>
     </div>
 </div>
 <div class="footer">
