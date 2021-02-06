@@ -1,21 +1,23 @@
 .topbanner {
-    height: 200px;    
+    height: 120px;
+    width: auto;
     background-color: #283C7E;
     font-size: xx-large;
-    font-weight: bolder;
+    font-weight: bold;
     color: white;
     -webkit-text-stroke-color: black;
     -webkit-text-stroke-width: 3px;
-    text-align: center;
-    padding-top: 30px;
     border-color: #CD8F00;
     border-style: solid;
     border-bottom-color: #111111;
+    padding-left: 5px; 
   }
   
   body {
       font-family: Arial, Helvetica, sans-serif;
       font-size: large;
+      overflow-x: auto;
+      overflow-y: auto;
     }
   
   .mainBody {
@@ -55,10 +57,8 @@
       background-color: #06237A;
     }
   
-    .anchorButton {
+    .standardButton{
       display: block;
-      width: 275px;
-      height: 20px;
       background: #283C7E;
       border-radius: 100px;
       border-style: solid;
@@ -69,9 +69,15 @@
       font-weight: bold;
       line-height: 25px; 
       text-decoration: none;
+      cursor: pointer;
+    }
+
+    .anchorButton {
+      width: 275px;
+      height: 20px;
     }
   
-    .anchorButton:hover {    
+    .standardButton:hover {    
       background: #344780;
     }
   
@@ -83,22 +89,66 @@
         border-style: solid;
     }
 
-    #prizeselectortable td {
-      position:relative;
+    #prizeselectortable{
+      align-content: flex-start;
+      padding-top: 39px;
+      display: flex;
+      flex-wrap: wrap;
+      flex-direction: row;
     }
-    #prizeselectortable span {
+
+    #prizeselectortable div {
+      position: relative;
+      height: 150px;
+      width: 100px;
+      margin: 1px;
+    }
+
+    #prizeselectortable div>span {
       position:absolute;
       right:10px;
       bottom:10px;
       z-index:10;
       padding:10px 15px;
       border-radius:50%;
-      background:blue;
+      background:#283C7E;
+      border-color: #CD8F00;
+      border-style: solid;
       color:white;
       font-size:1.5em;
+      pointer-events:none;   
     }
 
     .card {
-      height: 200px;
-      width: 150px
+      height: 100%;
+      width: 100%;
+    }
+
+    .prizeCard {      
+      height: 225px;
+      width: 150px;
+    }
+
+    .opaque{
+      opacity: 15%;
+    }
+
+    .menuShown{
+      
+      animation: showMenu 1s ease-in-out 0s 1 normal forwards;
+    }
+
+    .menuHidden{
+      animation: showMenu 1s ease-in-out 0s 1 reverse forwards;
+    }
+
+    @keyframes showMenu{
+      0%{
+        transform: translateX(0%);
+        width: 100%;
+      }
+      100%{
+        transform: translateX(-20%);
+        width: 120%;
+      }
     }
