@@ -37,10 +37,17 @@ function PrizeCard(image, taken)
     this.Taken = taken
 }
 
-var prizeCards = []
+var prizeCards = [];
+var table;
+var prizedCards=[];
+var blankImageLocation="./images/default-card-image.png";
+
+function init(){
+    table = document.getElementById('prizeselectortable');
+}
 
 function SubmitDecklist() {   
-    
+    resetPrizeSelectorTable();
     ResetPrizeCards()
     var decklistText = document.getElementById('decklist').value;
     CreateDecklistObject(decklistText)    
@@ -89,99 +96,30 @@ function CreateDecklistObject(decklistText)
 
 async function CreatePrizeSelectorTable(decklist)
 {
+    console.log(decklist);
     if(typeof decklist == 'undefined')
     {
         //show error message
         alert("The decklist is invalid.")
         return
-    }
-    var table = document.getElementById('prizeselectortable');
-    
-    while(table.rows.length > 0) {
-        table.deleteRow(0);
-      }
-    
-    
-    var colCount = 0;
-    var rowCnt = table.rows.length;
-    var tr = table.insertRow(rowCnt);
+    }   
 
-    for(var i = 0; i < decklist.Pokemon.length; i++)
+    let fullList = decklist.Pokemon.concat(decklist.Trainers.concat(decklist.Energy));
+    for(var i = 0; i < fullList.length; i++)
     {
-        if(colCount==9)
-        {
-            colCount = 0
-            rowCnt = table.rows.length;
-            tr = table.insertRow(rowCnt);
-        }
-
-        var td = document.createElement('td');
-        td = tr.insertCell(colCount);
-        await GetDecklistCardInformation(decklist.Pokemon[i].Info)
-        .then(card => {
-            var cardImage = document.createElement('img');//CREATE CARD IMAGE
-            var cardAmountSpan = document.createElement('span');//CREATE CARD AMOUNT SPAN
-            cardImage.src = card.ImageLink
-            cardImage.className = "card"
-            cardImage.onclick =  function () {SetPrizeCards(card, cardAmountSpan)}
-            cardAmountSpan.innerHTML = decklist.Pokemon[i].Number
-            td.appendChild(cardImage);
-            td.appendChild(cardAmountSpan);
-    
-            colCount++
-        })
-    }
-
-    for(var i = 0; i < decklist.Trainers.length; i++)
-    {
-        if(colCount==9)
-        {
-            colCount = 0
-            rowCnt = table.rows.length;
-            tr = table.insertRow(rowCnt);
-        }
-
-        var td = document.createElement('td');
-        td = tr.insertCell(colCount);
-        await GetDecklistCardInformation(decklist.Trainers[i].Info)
-        .then(card => {
-            var cardImage = document.createElement('img');//CREATE CARD IMAGE
-            var cardAmountSpan = document.createElement('span');//CREATE CARD AMOUNT SPAN
-            cardImage.src = card.ImageLink
-            cardImage.className = "card"
-            cardImage.onclick =  function () {SetPrizeCards(card, cardAmountSpan)}
-            cardAmountSpan.innerHTML = decklist.Trainers[i].Number
-            td.appendChild(cardImage);
-            td.appendChild(cardAmountSpan);
-    
-            colCount++
-        })
-    }
-
-    for(var i = 0; i < decklist.Energy.length; i++)
-    {
-        if(colCount==9)
-        {
-            colCount = 0
-            rowCnt = table.rows.length;
-            tr = table.insertRow(rowCnt);
-        }
-
-        var td = document.createElement('td');
-        td = tr.insertCell(colCount);
-        await GetDecklistCardInformation(decklist.Energy[i].Info)
+        var cardDiv = document.createElement('div');
+        await GetDecklistCardInformation(fullList[i].Info)
         .then(card => {
             var cardImage = document.createElement('img');//CREATE CARD IMAGE
             var cardAmountSpan = document.createElement('span');//CREATE CARD AMOUNT SPAN
             cardImage.src = card.ImageLink
             cardImage.className = "card"
             cardImage.onclick = function () {SetPrizeCards(card, cardAmountSpan)}
-            cardAmountSpan.innerHTML = decklist.Energy[i].Number
-            td.appendChild(cardImage);
-            td.appendChild(cardAmountSpan);
-    
-            colCount++
-        })
+            cardAmountSpan.innerHTML = fullList[i].Number
+            cardDiv.appendChild(cardImage);
+            cardDiv.appendChild(cardAmountSpan);
+            table.appendChild(cardDiv);
+        });
     }
 }
 
@@ -220,7 +158,7 @@ function SetPrizeCards(card, cardAmountSpan)
 
     if(Number(cardAmountSpan.innerHTML) == 0)
     {
-        alert("Invalid Selection due to count in Deck.")
+        alert("Invalid Selection due to count in Deck.");
         return;
     }
     
@@ -229,80 +167,65 @@ function SetPrizeCards(card, cardAmountSpan)
         var countInDeck = Number(cardAmountSpan.innerHTML) - 1
         cardAmountSpan.innerHTML = countInDeck
         prizeCards.push(new PrizeCard(card.ImageLink, false))
+        prizedCards.push(cardAmountSpan);
+        document.getElementsByClassName("prizeCard")[prizeCards.length-1].src = prizeCards[prizeCards.length-1]["Image"];
     }
     else
     {
         alert("Max amount of 6 Prize Cards")
         return
     }
-
-    var prizeCard1 = document.getElementById('prize1');
-    var prizeCard2 = document.getElementById('prize2');
-    var prizeCard3 = document.getElementById('prize3');
-    var prizeCard4 = document.getElementById('prize4');
-    var prizeCard5 = document.getElementById('prize5');
-    var prizeCard6 = document.getElementById('prize6');
-
-    if (prizeCards.length == 1)
-    {
-        prizeCard1.src = prizeCards[0]["Image"]
-    }
-    else if (prizeCards.length == 2)
-    {
-        prizeCard2.src = prizeCards[1]["Image"]
-    }
-    if (prizeCards.length == 3)
-    {
-        prizeCard3.src = prizeCards[2]["Image"]
-    }
-    else if (prizeCards.length == 4)
-    {
-        prizeCard4.src = prizeCards[3]["Image"]
-    }
-    if (prizeCards.length == 5)
-    {
-        prizeCard5.src = prizeCards[4]["Image"]
-    }
-    else if (prizeCards.length == 6)
-    {
-        prizeCard6.src = prizeCards[5]["Image"]
-    }
 }
 
-function TakePrizeCard(prizeCardId)
+function TakePrizeCard(prizeCard)
 {
-    var prizeCard = document.getElementById(prizeCardId)
-
-    if(prizeCard.style.opacity == 0.15)
-    {
-        prizeCard.style.opacity = ""
-    }
-    else
-    {
-        prizeCard.style.opacity= "15%"
-    }
+    prizeCard.classList.toggle("opaque");
 }
 
 function ResetPrizeCards()
 {     
-    prizeCards = []
-    var prizeCard1 = document.getElementById('prize1');
-    var prizeCard2 = document.getElementById('prize2');
-    var prizeCard3 = document.getElementById('prize3');
-    var prizeCard4 = document.getElementById('prize4');
-    var prizeCard5 = document.getElementById('prize5');
-    var prizeCard6 = document.getElementById('prize6');
+    prizeCards = [];
+    prizedCards = [];
+    for(let prize of document.getElementsByClassName("prizeCard")){
+        prize.src=blankImageLocation;
+        prize.classList.remove("opaque");
+    }
+}
 
-    prizeCard1.src = "./images/default-card-image.png"
-    prizeCard1.style.opacity = ""
-    prizeCard2.src = "./images/default-card-image.png"
-    prizeCard2.style.opacity = ""
-    prizeCard3.src = "./images/default-card-image.png"
-    prizeCard3.style.opacity = ""
-    prizeCard4.src = "./images/default-card-image.png"
-    prizeCard4.style.opacity = ""
-    prizeCard5.src = "./images/default-card-image.png"
-    prizeCard5.style.opacity = ""
-    prizeCard6.src = "./images/default-card-image.png"
-    prizeCard6.style.opacity = ""
+function resetPrizeSelectorTable(){
+    table.innerHTML="";
+}
+
+function returnLastPrize(){
+    if(prizeCards.length>0){
+        prizeCards.pop();
+        prizedCards.pop().innerHTML++;
+        document.getElementsByClassName("prizeCard")[prizeCards.length].src=blankImageLocation;
+    }
+}
+
+function returnPrizeCards(){
+    let len = prizeCards.length;
+    for(let i=0;i<len;i++){
+        returnLastPrize();
+    }
+}
+
+function hideListInputMenu(){
+    let mainBody = document.getElementById("mainBody");
+    let showHideListInputLabel = document.getElementById("showHideListInputLabel");
+    
+    
+    if(showHideListInputLabel.innerHTML=="SHOW"){
+        showHideListInputLabel.innerHTML="HIDE";
+        mainBody.classList.remove("menuShown");
+        void mainBody.offsetWidth;
+        mainBody.classList.add("menuHidden");
+    }
+    else{
+        showHideListInputLabel.innerHTML="SHOW";
+        mainBody.classList.remove("menuHidden");
+        void mainBody.offsetWidth;
+        mainBody.classList.add("menuShown");
+    }
 }

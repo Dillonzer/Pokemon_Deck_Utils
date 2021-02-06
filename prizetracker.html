@@ -6,7 +6,7 @@
 <link rel="stylesheet" href="style.css">
 <script src="scripts.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<body>
+<body onload="init()">
 <div class="topbanner">
     <h1>Prize Tracker</h1>
 </div>
@@ -17,35 +17,46 @@
         <li><a href="./howtouse.html">How to Use</a></li>
      </ul>
 </div>
-<div class="mainBody" style="display: flex">
-    <div>
-        <label for="decklist">Please post your decklist here:</label><br /><br />
-        <textarea id="decklist" style="height: 512px; width: 350px;"></textarea><br/>
-        <a id="submitDecklist" onclick="SubmitDecklist()" class="anchorButton">Submit Decklist</a>
+<div id="mainBody" class="mainBody" style="display: flex;position: relative;/*! transform: translateX(-20%); */">
+    <div style="display: flex;min-width: 20%;max-width: 20%;">
+        <div style="position: relative;width: 100%;">
+            <label for="decklist">Please post your decklist here:</label><br><br>
+            <textarea id="decklist" style="height: 397px; width: 279px;"></textarea><br>
+            <a id="submitDecklist" onclick="SubmitDecklist()" class="standardButton">Submit Decklist</a>
+        </div>
+        <div onclick="hideListInputMenu()" style="width: 10px;background: aliceblue;position: relative;filter: drop-shadow(3px 5px 2px #818181);">
+            <div id="showHideListInputLabel" style="width: 30px;position: absolute;height: 70px;background: aliceblue;border-top-right-radius: 10px;border-bottom-right-radius: 10px;padding-top: auto;writing-mode: vertical-rl;padding-top: 10px;padding-right: 5px;cursor: pointer;">
+                HIDE
+            </div>
+        </div>
     </div>
     <div id="prizeCards" style="flex: 1; padding-left: 50px; padding-top: 39px;">        
         <table id="prizeCards">
             <tr>
-                <td><img id="prize1" src="images/default-card-image.png" class="prizeCard" onclick="TakePrizeCard(this.id)"/></td>
-                <td><img id="prize2" src="images/default-card-image.png" class="prizeCard" onclick="TakePrizeCard(this.id)"/></td>
-                <td><img id="prize3" src="images/default-card-image.png" class="prizeCard" onclick="TakePrizeCard(this.id)"/></td>
+                <td><img id="prize1" src="images/default-card-image.png" class="prizeCard" onclick="TakePrizeCard(this)"/></td>
+                <td><img id="prize2" src="images/default-card-image.png" class="prizeCard" onclick="TakePrizeCard(this)"/></td>
+                <td><img id="prize3" src="images/default-card-image.png" class="prizeCard" onclick="TakePrizeCard(this)"/></td>
             </tr>
             <tr>
-                <td><img id="prize4" src="images/default-card-image.png" class="prizeCard" onclick="TakePrizeCard(this.id)"/></td>
-                <td><img id="prize5" src="images/default-card-image.png" class="prizeCard" onclick="TakePrizeCard(this.id)"/></td>
-                <td><img id="prize6" src="images/default-card-image.png" class="prizeCard" onclick="TakePrizeCard(this.id)"/></td>
+                <td><img id="prize4" src="images/default-card-image.png" class="prizeCard" onclick="TakePrizeCard(this)"/></td>
+                <td><img id="prize5" src="images/default-card-image.png" class="prizeCard" onclick="TakePrizeCard(this)"/></td>
+                <td><img id="prize6" src="images/default-card-image.png" class="prizeCard" onclick="TakePrizeCard(this)"/></td>
             </tr>
         </table>
+        <div style="display: flex;">
+            <a class="standardButton" onclick="returnPrizeCards()">Return ALL Prizes</a>
+            <a class="standardButton" onclick="returnLastPrize()">Return Last Prize</a>
+        </div>
     </div>
-    <div id="prizeSelector" style="flex: 1; padding-top: 39px;">
-        <table id="prizeselectortable" style="padding-right:50px"></table>
+    <div id="prizeSelector">
+        <div id="prizeselectortable"></div>
     </div>
 </div>
 <div class="footer">
     <br/>
-        <a href="https://twitter.com/dillonzer" class="anchorButton" style="float: right;">Follow me on Twitter!</a>
+        <a href="https://twitter.com/dillonzer" class="anchorButton standardButton" style="float: right;">Follow me on Twitter!</a>
 
-        <a href="https://trello.com/b/jmPHcU5o/dillonzers-pokemon-apps" class="anchorButton" style="float: right;">Follow my Trello Page!</a>
+        <a href="https://trello.com/b/jmPHcU5o/dillonzers-pokemon-apps" class="anchorButton standardButton" style="float: right;">Follow my Trello Page!</a>
     </div>
 </body>
 </html> 

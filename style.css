@@ -57,10 +57,8 @@
       background-color: #06237A;
     }
   
-    .anchorButton {
+    .standardButton{
       display: block;
-      width: 275px;
-      height: 20px;
       background: #283C7E;
       border-radius: 100px;
       border-style: solid;
@@ -71,9 +69,15 @@
       font-weight: bold;
       line-height: 25px; 
       text-decoration: none;
+      cursor: pointer;
+    }
+
+    .anchorButton {
+      width: 275px;
+      height: 20px;
     }
   
-    .anchorButton:hover {    
+    .standardButton:hover {    
       background: #344780;
     }
   
@@ -85,11 +89,22 @@
         border-style: solid;
     }
 
-    #prizeselectortable td {
-      position:relative;
+    #prizeselectortable{
+      align-content: flex-start;
+      padding-top: 39px;
+      display: flex;
+      flex-wrap: wrap;
+      flex-direction: row;
     }
 
-    #prizeselectortable span {
+    #prizeselectortable div {
+      position: relative;
+      height: 150px;
+      width: 100px;
+      margin: 1px;
+    }
+
+    #prizeselectortable div>span {
       position:absolute;
       right:10px;
       bottom:10px;
@@ -105,11 +120,35 @@
     }
 
     .card {
-      height: 150px;
-      width: 100px
+      height: 100%;
+      width: 100%;
     }
 
     .prizeCard {      
       height: 225px;
       width: 150px;
+    }
+
+    .opaque{
+      opacity: 15%;
+    }
+
+    .menuShown{
+      
+      animation: showMenu 1s ease-in-out 0s 1 normal forwards;
+    }
+
+    .menuHidden{
+      animation: showMenu 1s ease-in-out 0s 1 reverse forwards;
+    }
+
+    @keyframes showMenu{
+      0%{
+        transform: translateX(0%);
+        width: 100%;
+      }
+      100%{
+        transform: translateX(-20%);
+        width: 120%;
+      }
     }
