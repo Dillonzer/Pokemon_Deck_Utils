@@ -17,18 +17,13 @@ function Decklist()
     };
 }
 
-function DecklistItem(info, number)
-{
-    this.Info = info
-    this.Number = number
-}
-
-function Card(name, set, number, imageLink)
+function Card(name, set, number, imageLink, deckCount)
 {
     this.Name = name
     this.Set = set
     this.Number = number
     this.ImageLink = imageLink
+    this.DeckCount = deckCount
 }
 
 function PrizeCard(image, taken)
@@ -37,10 +32,10 @@ function PrizeCard(image, taken)
     this.Taken = taken
 }
 
-var prizeCards = [];
-var table;
-var prizedCards=[];
-var blankImageLocation="./images/default-card-image.png";
+let prizeCards = [];
+let table;
+let prizedCards=[];
+let blankImageLocation="./images/default-card-image.png";
 
 function init(){
     table = document.getElementById('prizeselectortable');
@@ -49,44 +44,45 @@ function init(){
 function SubmitDecklist() {   
     resetPrizeSelectorTable();
     ResetPrizeCards()
-    var decklistText = document.getElementById('decklist').value;
+    let decklistText = document.getElementById('decklist').value;
     CreateDecklistObject(decklistText)    
 }
 
 function CreateDecklistObject(decklistText)
 {
-    var decklist = new Decklist()
+    let decklist = new Decklist()
 
-    var myHeaders = new Headers();
+    let myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
 
-    var raw = JSON.stringify({"decklist": decklistText});
+    let raw = JSON.stringify({"decklist": decklistText.trim()});
 
-    var requestOptions = {
+    let requestOptions = {
     method: 'POST',
     headers: myHeaders,
     body: raw,
     redirect: 'follow'
     };
 
-    fetch("https://ptcg-api.herokuapp.com/prizeTracker/generateDecklist", requestOptions)
+    fetch("https://ptcg-api.herokuapp.com/deckutils/generateDecklist", requestOptions)
     .then(response => {
+        console.log(raw)
         return response.json()
         })
     .then(data => {
-        for(var i = 0; i < data["pokemon"].length; i++)
+        for(let i = 0; i < data["pokemon"].length; i++)
         {
-            decklist.addPokemon(new DecklistItem(data["pokemon"][i].info, data["pokemon"][i].number))
+            decklist.addPokemon(new Card(data["pokemon"][i].name, data["pokemon"][i].set["name"], data["pokemon"][i].number, data["pokemon"][i].imageUrlHiRes, data["pokemon"][i].deckCount))
         }
         
-        for(var i = 0; i < data["trainers"].length; i++)
+        for(let i = 0; i < data["trainers"].length; i++)
         {
-            decklist.addTrainers(new DecklistItem(data["trainers"][i].info, data["trainers"][i].number))
+            decklist.addTrainers(new Card(data["trainers"][i].name, data["trainers"][i].set["name"], data["trainers"][i].number, data["trainers"][i].imageUrlHiRes, data["trainers"][i].deckCount))
         }
         
-        for(var i = 0; i < data["energy"].length; i++)
+        for(let i = 0; i < data["energy"].length; i++)
         {
-            decklist.addEnergy(new DecklistItem(data["energy"][i].info, data["energy"][i].number))
+            decklist.addEnergy(new Card(data["energy"][i].name, data["energy"][i].set["name"], data["energy"][i].number, data["energy"][i].imageUrlHiRes, data["energy"][i].deckCount))
         }        
 
         CreatePrizeSelectorTable(decklist)
@@ -96,7 +92,6 @@ function CreateDecklistObject(decklistText)
 
 async function CreatePrizeSelectorTable(decklist)
 {
-    console.log(decklist);
     if(typeof decklist == 'undefined')
     {
         //show error message
@@ -105,52 +100,20 @@ async function CreatePrizeSelectorTable(decklist)
     }   
 
     let fullList = decklist.Pokemon.concat(decklist.Trainers.concat(decklist.Energy));
-    for(var i = 0; i < fullList.length; i++)
+    for(let i = 0; i < fullList.length; i++)
     {
-        var cardDiv = document.createElement('div');
-        await GetDecklistCardInformation(fullList[i].Info)
-        .then(card => {
-            var cardImage = document.createElement('img');//CREATE CARD IMAGE
-            var cardAmountSpan = document.createElement('span');//CREATE CARD AMOUNT SPAN
-            cardImage.src = card.ImageLink
-            cardImage.className = "card"
-            cardImage.onclick = function () {SetPrizeCards(card, cardAmountSpan)}
-            cardAmountSpan.innerHTML = fullList[i].Number
-            cardDiv.appendChild(cardImage);
-            cardDiv.appendChild(cardAmountSpan);
-            table.appendChild(cardDiv);
-        });
+        let card = fullList[i]
+        let cardDiv = document.createElement('div');
+        let cardImage = document.createElement('img');//CREATE CARD IMAGE
+        let cardAmountSpan = document.createElement('span');//CREATE CARD AMOUNT SPAN
+        cardImage.src = card.ImageLink
+        cardImage.className = "card"
+        cardImage.onclick = function () {SetPrizeCards(card, cardAmountSpan)}
+        cardAmountSpan.innerHTML = card.DeckCount
+        cardDiv.appendChild(cardImage);
+        cardDiv.appendChild(cardAmountSpan);
+        table.appendChild(cardDiv);
     }
-}
-
-function GetDecklistCardInformation(decklistCard)
-{
-    var card = new Card()
-    var myHeaders = new Headers();
-    myHeaders.append("Content-Type", "application/json");
-
-    var raw = JSON.stringify({"card":decklistCard});
-
-    var requestOptions = {
-    method: 'POST',
-    headers: myHeaders,
-    body: raw,
-    redirect: 'follow'
-    };
-
-    return fetch("https://ptcg-api.herokuapp.com/prizeTracker/getCardInformation", requestOptions)
-    .then(response => {
-        return response.json()
-        })
-    .then(data => {
-        card.Name = data["name"]
-        card.Number = data["number"]
-        card.Set = data["set"]["name"]
-        card.ImageLink = data["imageUrlHiRes"]
-
-        return card        
-    })
-    .catch(error => console.log('error', error));
 }
 
 function SetPrizeCards(card, cardAmountSpan)
@@ -164,7 +127,7 @@ function SetPrizeCards(card, cardAmountSpan)
     
     if(prizeCards.length < 6)
     {        
-        var countInDeck = Number(cardAmountSpan.innerHTML) - 1
+        let countInDeck = Number(cardAmountSpan.innerHTML) - 1
         cardAmountSpan.innerHTML = countInDeck
         prizeCards.push(new PrizeCard(card.ImageLink, false))
         prizedCards.push(cardAmountSpan);
@@ -201,6 +164,7 @@ function returnLastPrize(){
         prizeCards.pop();
         prizedCards.pop().innerHTML++;
         document.getElementsByClassName("prizeCard")[prizeCards.length].src=blankImageLocation;
+        document.getElementsByClassName("prizeCard")[prizeCards.length].classList.remove("opaque");
     }
 }
 
