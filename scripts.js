@@ -32,13 +32,24 @@ function PrizeCard(image, taken)
     this.Taken = taken
 }
 
+function Set(name, code, ptcgo_code, releaseDate)
+{
+    this.Name = name;
+    this.Code = code;
+    this.PTCGO_Code = ptcgo_code;
+    this.ReleaseDate = releaseDate;
+}
+
 let prizeCards = [];
-let table;
+let prizeTable;
+let setViewTable;
 let prizedCards=[];
 let blankImageLocation="./images/default-card-image.png";
+let apiUrl = "https://ptcg-api.herokuapp.com"
+let allSets = [];
 
 function init(){
-    table = document.getElementById('prizeselectortable');
+    prizeTable = document.getElementById('prizeselectortable');
 }
 
 function SubmitDecklist() {   
@@ -64,7 +75,7 @@ function CreateDecklistObject(decklistText)
     redirect: 'follow'
     };
 
-    fetch("https://ptcg-api.herokuapp.com/deckutils/generateDecklist", requestOptions)
+    fetch(apiUrl+"/deckutils/generateDecklist", requestOptions)
     .then(response => {
         console.log(raw)
         return response.json()
@@ -112,7 +123,7 @@ async function CreatePrizeSelectorTable(decklist)
         cardAmountSpan.innerHTML = card.DeckCount
         cardDiv.appendChild(cardImage);
         cardDiv.appendChild(cardAmountSpan);
-        table.appendChild(cardDiv);
+        prizeTable.appendChild(cardDiv);
     }
 }
 
@@ -156,7 +167,7 @@ function ResetPrizeCards()
 }
 
 function resetPrizeSelectorTable(){
-    table.innerHTML="";
+    prizeTable.innerHTML="";
 }
 
 function returnLastPrize(){
@@ -193,3 +204,76 @@ function hideListInputMenu(){
         mainBody.classList.add("menuShown");
     }
 }
+
+function GetAllSets()
+{
+    setViewTable = document.getElementById('setviewtable');
+    var apiCall = apiUrl+"/api/sets";
+            fetch(apiCall).then(response => {
+            return response.json();
+            }).then(data => {
+                for(index in data) {
+                    allSets.push(new Set(data[index].name, data[index].code, data[index].ptcgoCode, data[index].releaseDate));
+                }
+
+                var setSelect = document.getElementById("setName")
+                var sortedSets = allSets.sort((a,b) => Date.parse(b.ReleaseDate) - Date.parse(a.ReleaseDate))
+                                
+            
+                for(var i = 0; i < sortedSets.length; i++)
+                {
+                    setSelect.options[setSelect.options.length] = new Option(sortedSets[i].Name + " (" + sortedSets[i].PTCGO_Code + ")", sortedSets[i].Name);
+                }
+                
+            }).catch(err => {
+                console.log(err)
+            });
+}
+
+async function createAllSetTable(setName)
+{ 
+    setViewTable.innerHTML="";
+    let cardsInSet = []
+    var apiCall = apiUrl+"/api/cards/setName="+setName.value;
+    fetch(apiCall).then(response => {
+    return response.json();
+    }).then(data => {
+        for(index in data) {
+            cardsInSet.push(new Card(data[index].name, data[index].setName, data[index].number, data[index].imageUrlHiRes));
+        }
+
+        for(let i = 0; i < cardsInSet.length; i++)
+        {
+            let card = cardsInSet[i]
+            let cardImage = document.createElement('img');//CREATE CARD IMAGE
+            cardImage.src = card.ImageLink            
+            cardImage.onclick = function () {growCard(card)}
+            cardImage.className = "card"
+            setViewTable.appendChild(cardImage);
+        }
+    }).catch(err => {
+        console.log(err)
+    });
+}
+
+function growCard(card) 
+{    
+    var centerCard = document.getElementById("centeredCard")
+    if(centerCard.style.display == "none")
+    {
+        centerCard.style.display = "block"
+        centerCard.src = card.ImageLink
+        setViewTable.className += " blur"
+
+    }
+}
+
+function hideCenterCard()
+{
+    var centerCard = document.getElementById("centeredCard")
+    centerCard.style.display = "none"
+    setViewTable.className = "";
+}
+
+
+

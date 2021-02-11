@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<title>Pokemon Deck Utils | Prize Tracker</title>
+<link rel="shortcut icon" type="image/jpg" href="./images/Logo.png"/>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="style.css">
+<script src="scripts.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<body onload="GetAllSets()">
+<div class="topbanner">
+    <h1>Prize Tracker</h1>
+</div>
+<div class="navbar">
+    <ul>
+        <li><a href="./index.html">Home</a></li>
+        <li><a href="./howtouse.html">How to Use</a></li>
+        <li><a href="./prizetracker.html">Prize Tracker</a></li>
+        <li><a class="active">Set Viewer</a></li>
+     </ul>
+</div>
+<div id="mainBody" class="mainBody" style="display: flex;position: relative;/*! transform: translateX(-20%); */">
+    <div style="position: absolute">
+        <label for="setName">Please select a Set:</label>
+        <select id="setName" onchange="createAllSetTable(this)">
+            <option value="" disabled selected>Please select a Set</option>
+        </select>
+    </div>
+    <br />
+    <div id="setView" style="margin:5px">
+        <div id="setviewtable"></div>
+    </div>
+    <div class="centerScreen">
+        <img id="centeredCard" style="display: none"; onclick="hideCenterCard()"/>
+    </div>
+</div>
+<div class="footer">
+    <div style="float: right;">
+        <a href="https://discord.gg/SqpJZn2" title="Join us on Discord"><img class="socialMediaIcons" src="./images/Discord-Logo-Color.png"/></a>           
+        <a href="https://twitter.com/dillonzer" title="Follow me on Twitter"><img class="socialMediaIcons" src="./images/twitter.png" style="padding-right: 5px; padding-bottom: 2px;"/></a>
+        <a href="https://trello.com/b/jmPHcU5o/dillonzers-pokemon-apps" title="Follow my Trello Board"><img class="socialMediaIcons" src="./images/trello-512.png" style="width:40px; height:40px; padding-bottom: 7px;"/>
+    </div>
+</div>
+</body>
+</html> 

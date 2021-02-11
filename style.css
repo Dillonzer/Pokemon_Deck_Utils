@@ -157,3 +157,51 @@
       width: 50px;
       height: 50px;
    }
+
+   #setviewtable{
+    align-content: flex-start;
+    padding-top: 39px;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+  }
+
+  #setviewtable img {
+    position: relative;
+    height: 150px;
+    width: 100px;
+    margin: 1px;
+  }
+
+  #setName {
+    width: 320px;
+    height: 30px;
+    font-size: 110%;
+    padding-left: 2px;
+    margin-bottom: 10px;
+    border-radius: 7px;
+    border:3px solid #cd8f00;
+    background-color: #344780;
+    color:#f2f2f2;
+    font-weight: bold;
+}
+
+.centerScreen {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  /* bring your own prefixes */
+  transform: translate(-50%, -50%);
+  z-index: 1000;
+}
+
+#centeredCard
+{
+  height: 225%;
+  width: 75%;
+}
+
+.blur {
+  filter: blur(8px);
+  -webkit-filter: blur(8px);
+}
