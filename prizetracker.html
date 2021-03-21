@@ -6,6 +6,12 @@
 <link rel="stylesheet" href="style.css">
 <script src="scripts.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+    $(document).bind("contextmenu",function(e){
+    e.preventDefault();  
+});
+</script>
+
 <body onload="init()">
 <div class="topbanner">
     <h1>Prize Tracker</h1>
@@ -34,14 +40,14 @@
     <div id="prizeCards" style="flex: 1; padding-left: 50px; padding-top: 39px;">        
         <table id="prizeCards">
             <tr>
-                <td><img id="prize1" src="images/default-card-image.png" class="prizeCard" onclick="TakePrizeCard(this)"/></td>
-                <td><img id="prize2" src="images/default-card-image.png" class="prizeCard" onclick="TakePrizeCard(this)"/></td>
-                <td><img id="prize3" src="images/default-card-image.png" class="prizeCard" onclick="TakePrizeCard(this)"/></td>
+                <td><img id="prize1" src="images/default-card-image.png" class="prizeCard" onclick="TakePrizeCard(this)" oncontextmenu="ResetThisPrizeCard(1)"/></td>
+                <td><img id="prize2" src="images/default-card-image.png" class="prizeCard" onclick="TakePrizeCard(this)" oncontextmenu="ResetThisPrizeCard(2)"/></td>
+                <td><img id="prize3" src="images/default-card-image.png" class="prizeCard" onclick="TakePrizeCard(this)" oncontextmenu="ResetThisPrizeCard(3)"/></td>
             </tr>
             <tr>
-                <td><img id="prize4" src="images/default-card-image.png" class="prizeCard" onclick="TakePrizeCard(this)"/></td>
-                <td><img id="prize5" src="images/default-card-image.png" class="prizeCard" onclick="TakePrizeCard(this)"/></td>
-                <td><img id="prize6" src="images/default-card-image.png" class="prizeCard" onclick="TakePrizeCard(this)"/></td>
+                <td><img id="prize4" src="images/default-card-image.png" class="prizeCard" onclick="TakePrizeCard(this)" oncontextmenu="ResetThisPrizeCard(4)"/></td>
+                <td><img id="prize5" src="images/default-card-image.png" class="prizeCard" onclick="TakePrizeCard(this)" oncontextmenu="ResetThisPrizeCard(5)"/></td>
+                <td><img id="prize6" src="images/default-card-image.png" class="prizeCard" onclick="TakePrizeCard(this)" oncontextmenu="ResetThisPrizeCard(6)"/></td>
             </tr>
         </table>
         <div style="display: flex;">
