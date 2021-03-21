@@ -19,17 +19,18 @@ function Decklist()
 
 function Card(name, set, number, imageLink, deckCount)
 {
-    this.Name = name
-    this.Set = set
-    this.Number = number
-    this.ImageLink = imageLink
-    this.DeckCount = deckCount
+    this.Name = name;
+    this.Set = set;
+    this.Number = number;
+    this.ImageLink = imageLink;
+    this.DeckCount = deckCount;
 }
 
-function PrizeCard(image, taken)
+function PrizeCard(image, taken, position)
 {
-    this.Image = image
-    this.Taken = taken
+    this.Image = image;
+    this.Taken = taken;
+    this.Position = position;
 }
 
 function Set(name, code, ptcgo_code, releaseDate)
@@ -77,7 +78,6 @@ function CreateDecklistObject(decklistText)
 
     fetch(apiUrl+"/deckutils/generateDecklist", requestOptions)
     .then(response => {
-        console.log(raw)
         return response.json()
         })
     .then(data => {
@@ -140,7 +140,7 @@ function SetPrizeCards(card, cardAmountSpan)
     {        
         let countInDeck = Number(cardAmountSpan.innerHTML) - 1
         cardAmountSpan.innerHTML = countInDeck
-        prizeCards.push(new PrizeCard(card.ImageLink, false))
+        prizeCards.push(new PrizeCard(card.ImageLink, false, prizeCards.length+1))
         prizedCards.push(cardAmountSpan);
         document.getElementsByClassName("prizeCard")[prizeCards.length-1].src = prizeCards[prizeCards.length-1]["Image"];
     }
@@ -275,5 +275,29 @@ function hideCenterCard()
     setViewTable.className = "";
 }
 
+function ResetThisPrizeCard(position)
+{    
+    if(prizedCards.length < position)
+    {
+        return;
+    }
 
+    prizedCards[position-1].innerHTML++;
+    prizeCards.splice(position-1,1);
+    prizedCards.splice(position-1,1);
+
+    for(let i=position-1;i<6;i++)
+    {        
+        if(i+1 == 6)
+        {            
+            document.getElementsByClassName("prizeCard")[i].src= blankImageLocation
+        }
+        else
+        {            
+            document.getElementsByClassName("prizeCard")[i].src= document.getElementsByClassName("prizeCard")[i+1].src;
+        }
+        
+    }
+    
+}
 
