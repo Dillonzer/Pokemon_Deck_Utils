@@ -60,9 +60,31 @@ function SubmitDecklist() {
     CreateDecklistObject(decklistText)    
 }
 
+function ReplaceEnergySymbols(decklist)
+{
+    decklist = decklist.replace("Unit Energy {F}{D}{Y}", "Unit Energy FDY")
+    decklist = decklist.replace("Unit Energy {G}{R}{W}", "Unit Energy GRW")
+    decklist = decklist.replace("Unit Energy {L}{P}{M}", "Unit Energy LPM")
+    decklist = decklist.replace("Blend Energy {G} {R} {P} {D}", "Blend Energy GRPD")
+    decklist = decklist.replace("Blend Energy {W} {L} {F} {M}", "Blend Energy WLFM")
+    decklist = decklist.replace("{D}", "Darkness")
+    decklist = decklist.replace("{G}", "Grass")
+    decklist = decklist.replace("{M}", "Metal")
+    decklist = decklist.replace("{R}", "Fire")
+    decklist = decklist.replace("{C}", "Colorless")
+    decklist = decklist.replace("{F}", "Fighting")
+    decklist = decklist.replace("{W}", "Water")
+    decklist = decklist.replace("{L}", "Lightning")
+    decklist = decklist.replace("{P}", "Psychic")
+
+    return decklist
+}
+
 function CreateDecklistObject(decklistText)
 {
     let decklist = new Decklist()
+
+    decklistText = ReplaceEnergySymbols(decklistText)
 
     let myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
@@ -92,7 +114,7 @@ function CreateDecklistObject(decklistText)
         }
         
         for(let i = 0; i < data["energy"].length; i++)
-        {
+        {            
             decklist.addEnergy(new Card(data["energy"][i].name, data["energy"][i].set["name"], data["energy"][i].number, data["energy"][i].imageUrlHiRes, data["energy"][i].deckCount))
         }        
 
