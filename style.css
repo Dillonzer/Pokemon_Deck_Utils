@@ -119,6 +119,36 @@
       pointer-events:none;   
     }
 
+    #deckviewTable{
+      align-content: flex-start;
+      padding-top: 39px;
+      display: flex;
+      flex-wrap: wrap;
+      flex-direction: row;
+    }
+
+    #deckviewTable div {
+      position: relative;
+      height: 150px;
+      width: 100px;
+      margin: 1px;
+    }
+
+    #deckviewTable div>span {
+      position:absolute;
+      right:10px;
+      bottom:10px;
+      z-index:10;
+      padding:10px 15px;
+      border-radius:50%;
+      background:#283C7E;
+      border-color: #CD8F00;
+      border-style: solid;
+      color:white;
+      font-size:1.5em;
+      pointer-events:none;   
+    }
+
     .card {
       height: 100%;
       width: 100%;
@@ -186,6 +216,19 @@
     font-weight: bold;
 }
 
+#deckWizardCardName {
+  width: 320px;
+  height: 30px;
+  font-size: 110%;
+  padding-left: 2px;
+  margin-bottom: 10px;
+  border-radius: 7px;
+  border:3px solid #cd8f00;
+  background-color: #344780;
+  color:#f2f2f2;
+  font-weight: bold;
+}
+
 .centerScreen {
   position: fixed;
   top: 50%;
@@ -204,4 +247,88 @@
 .blur {
   filter: blur(8px);
   -webkit-filter: blur(8px);
+}
+
+#bottomButtons
+{
+  display: inline;
+}
+
+.lds-spinner {
+  color: official;
+  display: inline-block;
+  position: relative;
+  width: 80px;
+  height: 80px;
+}
+.lds-spinner div {
+  transform-origin: 40px 40px;
+  animation: lds-spinner 1.2s linear infinite;
+}
+.lds-spinner div:after {
+  content: " ";
+  display: block;
+  position: absolute;
+  top: 3px;
+  left: 37px;
+  width: 6px;
+  height: 18px;
+  border-radius: 20%;
+  background: rgb(0, 0, 0);
+}
+.lds-spinner div:nth-child(1) {
+  transform: rotate(0deg);
+  animation-delay: -1.1s;
+}
+.lds-spinner div:nth-child(2) {
+  transform: rotate(30deg);
+  animation-delay: -1s;
+}
+.lds-spinner div:nth-child(3) {
+  transform: rotate(60deg);
+  animation-delay: -0.9s;
+}
+.lds-spinner div:nth-child(4) {
+  transform: rotate(90deg);
+  animation-delay: -0.8s;
+}
+.lds-spinner div:nth-child(5) {
+  transform: rotate(120deg);
+  animation-delay: -0.7s;
+}
+.lds-spinner div:nth-child(6) {
+  transform: rotate(150deg);
+  animation-delay: -0.6s;
+}
+.lds-spinner div:nth-child(7) {
+  transform: rotate(180deg);
+  animation-delay: -0.5s;
+}
+.lds-spinner div:nth-child(8) {
+  transform: rotate(210deg);
+  animation-delay: -0.4s;
+}
+.lds-spinner div:nth-child(9) {
+  transform: rotate(240deg);
+  animation-delay: -0.3s;
+}
+.lds-spinner div:nth-child(10) {
+  transform: rotate(270deg);
+  animation-delay: -0.2s;
+}
+.lds-spinner div:nth-child(11) {
+  transform: rotate(300deg);
+  animation-delay: -0.1s;
+}
+.lds-spinner div:nth-child(12) {
+  transform: rotate(330deg);
+  animation-delay: 0s;
+}
+@keyframes lds-spinner {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
 }

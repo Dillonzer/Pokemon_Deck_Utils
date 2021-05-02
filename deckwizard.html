@@ -1,39 +1,46 @@
 <!DOCTYPE html>
 <html>
-<title>Pokemon Deck Utils | Set Viewer</title>
+<title>Pokemon Deck Utils | Deck Wizard</title>
 <link rel="shortcut icon" type="image/jpg" href="./images/Logo.png"/>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="style.css">
 <script src="scripts.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<body onload="GetAllSets()">
+<body onload="GetAllDeckWizardCards()">
 <div class="topbanner">
-    <h1>Set Viewer</h1>
+    <h1>Deck Wizard</h1>
 </div>
 <div class="navbar">
     <ul>
         <li><a href="./index.html">Home</a></li>
         <li><a href="./howtouse.html">How to Use</a></li>
         <li><a href="./prizetracker.html">Prize Tracker</a></li>
-        <li><a class="active">Set Viewer</a></li>
-        <li><a href="./deckwizard.html">Deck Wizard</a></li>
+        <li><a href="./setviewer.html">Set Viewer</a></li>
+        <li><a class="active">Deck Wizard</a></li>
      </ul>
 </div>
 <div id="mainBody" class="mainBody" style="display: flex;position: relative;/*! transform: translateX(-20%); */">
     <div style="position: absolute">
-        <label for="setName">Please select a Set:</label>
-        <select id="setName" onchange="createAllSetTable(this)">
-            <option value="" disabled selected>Please select a Set</option>
+        <label for="deckWizardCardName">Please select a Card:</label>
+        <select id="deckWizardCardName">
+            <option value="" disabled selected>Please select a Card</option>
         </select>
     </div>
     <br />
-    <div id="setView" style="margin:5px">
-        <div id="setviewtable"></div>
-    </div>
-    <div class="centerScreen">
-        <img id="centeredCard" style="display: none"; onclick="hideCenterCard()"/>
+    <div id="deckView" style="margin:5px">
+        <div id="deckviewTable"></div>
     </div>
 </div>
+<div id="loadingDeckWizard" class="centerScreen" style="visibility:hidden;">
+    <div class="lds-spinner"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+</div>
+<div id="bottomButtons">
+    <a id="generateDeckwizard" class="standardButton" onclick="CreateDeckWizardDeck()" style="width: 20%;">Generate Deck</a>
+    <a id="ptcgoExportButton" class="standardButton" style="width: 20%; visibility: hidden;" onclick="CopyDeckWizardToClipboard()">Copy to Clipboard</a>
+</div>
+<br />
+<br />
+<br />
 <div class="footer">
     <div style="float: right;">
         <a href="https://www.patreon.com/bePatron?u=34112337" title="Become a Patreon"><img class="socialMediaIcons" src="./images/patreon-creators-patreon.png" style="width:40px; height:40px; padding-bottom: 7px;"/></a>  
