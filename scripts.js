@@ -1,19 +1,9 @@
 function Decklist()
 {
-    this.Pokemon = []
-    this.Trainers = []
-    this.Energy = []
+    this.Cards=[]
 
-    this.addPokemon = function (newObject) {
-        this.Pokemon.push(newObject);
-    };
-    
-    this.addTrainers = function (newObject) {
-        this.Trainers.push(newObject);
-    };
-    
-    this.addEnergy = function (newObject) {
-        this.Energy.push(newObject);
+    this.addCards = function (newObject) {
+        this.Cards.push(newObject);
     };
 }
 
@@ -48,6 +38,7 @@ let prizedCards=[];
 let blankImageLocation="./images/default-card-image.png";
 let apiUrl = "https://ptcg-api.herokuapp.com"
 let allSets = [];
+let deckWizardCopy = ""
 
 function init(){
     prizeTable = document.getElementById('prizeselectortable');
@@ -98,25 +89,18 @@ function CreateDecklistObject(decklistText)
     redirect: 'follow'
     };
 
-    fetch(apiUrl+"/deckutils/generateDecklist", requestOptions)
+    var checked = !document.getElementById('fromPTCGO').checked
+
+    fetch(apiUrl+"/deckutils/generateDecklist?unordered="+checked, requestOptions)
     .then(response => {
         return response.json()
         })
     .then(data => {
-        for(let i = 0; i < data["pokemon"].length; i++)
+        console.log(data["cards"])
+        for(let i = 0; i < data["cards"].length; i++)
         {
-            decklist.addPokemon(new Card(data["pokemon"][i].name, data["pokemon"][i].set["name"], data["pokemon"][i].number, data["pokemon"][i].imageUrlHiRes, data["pokemon"][i].deckCount))
-        }
-        
-        for(let i = 0; i < data["trainers"].length; i++)
-        {
-            decklist.addTrainers(new Card(data["trainers"][i].name, data["trainers"][i].set["name"], data["trainers"][i].number, data["trainers"][i].imageUrlHiRes, data["trainers"][i].deckCount))
-        }
-        
-        for(let i = 0; i < data["energy"].length; i++)
-        {            
-            decklist.addEnergy(new Card(data["energy"][i].name, data["energy"][i].set["name"], data["energy"][i].number, data["energy"][i].imageUrlHiRes, data["energy"][i].deckCount))
-        }        
+            decklist.addCards(new Card(data["cards"][i].name, data["cards"][i].set["name"], data["cards"][i].number, data["cards"][i].imageUrlHiRes, data["cards"][i].deckCount))
+        }    
 
         CreatePrizeSelectorTable(decklist)
     })
@@ -132,7 +116,7 @@ async function CreatePrizeSelectorTable(decklist)
         return
     }   
 
-    let fullList = decklist.Pokemon.concat(decklist.Trainers.concat(decklist.Energy));
+    let fullList = decklist.Cards;
     for(let i = 0; i < fullList.length; i++)
     {
         let card = fullList[i]
@@ -323,3 +307,119 @@ function ResetThisPrizeCard(position)
     
 }
 
+function GetAllDeckWizardCards()
+{
+    setViewTable = document.getElementById('deckWizardCardName');
+    var apiCall = apiUrl+"/deckutils/deckWizard/uniqueCards";
+            fetch(apiCall).then(response => {
+            return response.json();
+            }).then(data => {
+                var cardNames = document.getElementById("deckWizardCardName")                                
+            
+                var sortedCards = data.sort()
+                for(var i = 0; i < sortedCards.length; i++)
+                {
+                    cardNames.options[cardNames.options.length] = new Option(sortedCards[i], sortedCards[i]);
+                }
+                
+            }).catch(err => {
+                console.log(err)
+            });
+}
+
+function CreateDeckWizardDeck()
+{
+    document.getElementById('loadingDeckWizard').style.visibility = 'visible'
+    var card = document.getElementById('deckWizardCardName').value
+
+    if(typeof card == 'undefined')
+    {
+        //show error message
+        alert("No card selected")
+        return
+    } 
+
+    var splitCard = card.split("|")
+    var url = apiUrl+"/deckutils/deckWizard/cardName="+splitCard[0].trim()+"/cardSet="+splitCard[1].trim()+"/number="+splitCard[2].trim()
+    if(splitCard[1] === "  ")
+    {
+        url = apiUrl+"/deckutils/deckWizard/cardName="+splitCard[0].trim()
+    }
+    
+
+    var requestOptions = {
+        method: 'GET'
+      };
+      
+      fetch(url, requestOptions)
+        .then(response => {
+            return response.json()
+        })
+        .then(data => {deckWizardCopy = data["importString"]; CreateDeckWizardDeckObjectAndPicture(data["importString"]);});
+}
+
+function CreateDeckWizardDeckObjectAndPicture(decklistText)
+{
+    let decklist = new Decklist()
+
+    let myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+
+    let raw = JSON.stringify({"decklist": decklistText.trim()});
+
+    let requestOptions = {
+    method: 'POST',
+    headers: myHeaders,
+    body: raw,
+    redirect: 'follow'
+    };
+    fetch(apiUrl+"/deckutils/generateDecklist?unordered=true", requestOptions)
+    .then(response => {
+        return response.json()
+        })
+    .then(data => {
+        for(let i = 0; i < data["cards"].length; i++)
+        {
+            decklist.addCards(new Card(data["cards"][i].name, data["cards"][i].set["name"], data["cards"][i].number, data["cards"][i].imageUrlHiRes, data["cards"][i].deckCount))
+        }    
+
+        CreateDeckWizardDeckPicture(decklist)
+    })
+    .catch(error => console.log('error', error));
+}
+
+async function CreateDeckWizardDeckPicture(decklist)
+{    
+    var deckWizardTable = document.getElementById('deckviewTable')
+    deckWizardTable.innerHTML="";
+    for(let i = 0; i < decklist.Cards.length; i++)
+    {
+        let card = decklist.Cards[i]
+        let cardDiv = document.createElement('div');
+        let cardImage = document.createElement('img');//CREATE CARD IMAGE
+        let cardAmountSpan = document.createElement('span');//CREATE CARD AMOUNT SPAN
+        cardImage.src = card.ImageLink
+        cardImage.className = "card"
+        cardAmountSpan.innerHTML = card.DeckCount
+        cardDiv.appendChild(cardImage);
+        cardDiv.appendChild(cardAmountSpan);
+        deckWizardTable.appendChild(cardDiv);
+    }
+    document.getElementById('ptcgoExportButton').style.visibility = 'visible'
+    document.getElementById('loadingDeckWizard').style.visibility = 'hidden'
+}
+
+function CopyDeckWizardToClipboard()
+{
+    var dummy = document.createElement("textarea");
+    // to avoid breaking orgain page when copying more words
+    // cant copy when adding below this code
+    // dummy.style.display = 'none'
+    document.body.appendChild(dummy);
+    //Be careful if you use texarea. setAttribute('value', value), which works with "input" does not work with "textarea". – Eduard
+    dummy.value = deckWizardCopy;
+    dummy.select();
+    document.execCommand("copy");
+    alert("Copied the deck to the clipboard!");
+    document.body.removeChild(dummy);
+}
