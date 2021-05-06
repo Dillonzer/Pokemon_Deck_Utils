@@ -39,6 +39,7 @@ let blankImageLocation="./images/default-card-image.png";
 let apiUrl = "https://ptcg-api.herokuapp.com"
 let allSets = [];
 let deckWizardCopy = ""
+let deckWizardMetaGameUrl = ""
 
 function init(){
     prizeTable = document.getElementById('prizeselectortable');
@@ -355,7 +356,7 @@ function CreateDeckWizardDeck()
         .then(response => {
             return response.json()
         })
-        .then(data => {deckWizardCopy = data["importString"]; CreateDeckWizardDeckObjectAndPicture(data["importString"]);});
+        .then(data => {deckWizardMetaGameUrl = data["metagameUrl"]; deckWizardCopy = data["importString"]; CreateDeckWizardDeckObjectAndPicture(data["importString"]);});
 }
 
 function CreateDeckWizardDeckObjectAndPicture(decklistText)
@@ -406,6 +407,8 @@ async function CreateDeckWizardDeckPicture(decklist)
         deckWizardTable.appendChild(cardDiv);
     }
     document.getElementById('ptcgoExportButton').style.visibility = 'visible'
+    document.getElementById('metagameUrl').style.visibility = 'visible'
+    document.getElementById('metagameUrl').href = deckWizardMetaGameUrl
     document.getElementById('loadingDeckWizard').style.visibility = 'hidden'
 }
 
