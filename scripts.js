@@ -54,20 +54,21 @@ function SubmitDecklist() {
 
 function ReplaceEnergySymbols(decklist)
 {
-    decklist = decklist.replace("Unit Energy {F}{D}{Y}", "Unit Energy FDY")
-    decklist = decklist.replace("Unit Energy {G}{R}{W}", "Unit Energy GRW")
-    decklist = decklist.replace("Unit Energy {L}{P}{M}", "Unit Energy LPM")
-    decklist = decklist.replace("Blend Energy {G} {R} {P} {D}", "Blend Energy GRPD")
-    decklist = decklist.replace("Blend Energy {W} {L} {F} {M}", "Blend Energy WLFM")
-    decklist = decklist.replace("{D}", "Darkness")
-    decklist = decklist.replace("{G}", "Grass")
-    decklist = decklist.replace("{M}", "Metal")
-    decklist = decklist.replace("{R}", "Fire")
-    decklist = decklist.replace("{C}", "Colorless")
-    decklist = decklist.replace("{F}", "Fighting")
-    decklist = decklist.replace("{W}", "Water")
-    decklist = decklist.replace("{L}", "Lightning")
-    decklist = decklist.replace("{P}", "Psychic")
+    decklist = decklist.replaceAll("Unit Energy {F}{D}{Y}", "Unit Energy FDY")
+    decklist = decklist.replaceAll("Unit Energy {G}{R}{W}", "Unit Energy GRW")
+    decklist = decklist.replaceAll("Unit Energy {L}{P}{M}", "Unit Energy LPM")
+    decklist = decklist.replaceAll("Blend Energy {G} {R} {P} {D}", "Blend Energy GRPD")
+    decklist = decklist.replaceAll("Blend Energy {W} {L} {F} {M}", "Blend Energy WLFM")
+    decklist = decklist.replaceAll("{D}", "Darkness")
+    decklist = decklist.replaceAll("{G}", "Grass")
+    decklist = decklist.replaceAll("{M}", "Metal")
+    decklist = decklist.replaceAll("{R}", "Fire")
+    decklist = decklist.replaceAll("{C}", "Colorless")
+    decklist = decklist.replaceAll("{F}", "Fighting")
+    decklist = decklist.replaceAll("{W}", "Water")
+    decklist = decklist.replaceAll("{L}", "Lightning")
+    decklist = decklist.replaceAll("{P}", "Psychic")
+    decklist = decklist.replaceAll(" Team Flare Gear", "")
 
     return decklist
 }
@@ -97,7 +98,6 @@ function CreateDecklistObject(decklistText)
         return response.json()
         })
     .then(data => {
-        console.log(data["cards"])
         for(let i = 0; i < data["cards"].length; i++)
         {
             decklist.addCards(new Card(data["cards"][i].name, data["cards"][i].set["name"], data["cards"][i].number, data["cards"][i].imageUrlHiRes, data["cards"][i].deckCount))
