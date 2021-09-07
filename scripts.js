@@ -40,6 +40,7 @@ let apiUrl = "https://ptcg-api.herokuapp.com"
 let allSets = [];
 let deckWizardCopy = ""
 let deckWizardMetaGameUrl = ""
+var allCards = []
 
 function init(){
     prizeTable = document.getElementById('prizeselectortable');
@@ -426,3 +427,133 @@ function CopyDeckWizardToClipboard()
     alert("Copied the deck to the clipboard!");
     document.body.removeChild(dummy);
 }
+
+function GetAllCards()
+{
+    var apiCall = apiUrl+"/api/cards";
+            fetch(apiCall).then(response => {
+            return response.json();
+            }).then(data => {
+                for(index in data) {
+                    allCards.push(new Card(data[index].name, data[index].set.ptcgoCode, data[index].number, data[index].imageUrlHiRes, 0));
+                }  
+                
+            }).catch(err => {
+                console.log(err)
+            });
+}
+
+function GetCardsInSet()
+{ 
+    var setCode = document.getElementById("setName").value
+    var cardSelect = document.getElementById("cardName")
+    var cardsInSet = allCards.filter(cards => cards.Set === setCode)
+    var sortedCardsInSet = cardsInSet.sort((a,b) => (a.Name > b.Name) ? 1 : ((b.Name > a.Name) ? -1 : 0))
+    cardSelect.options.length = 0;
+    for (let i = 0; i < sortedCardsInSet.length; i++)
+    {
+        cardSelect.options[cardSelect.options.length] = new Option(sortedCardsInSet[i].Name + " (" + sortedCardsInSet[i].Number + ")", sortedCardsInSet[i].ImageLink);
+    }
+    
+    setCardImageForStreamerViewer()
+}
+
+function GetAllSetsButSetCode()
+{
+    var apiCall = apiUrl+"/api/sets";
+            fetch(apiCall).then(response => {
+            return response.json();
+            }).then(data => {
+                for(index in data) {
+                    allSets.push(new Set(data[index].name, data[index].code, data[index].ptcgoCode, data[index].releaseDate));
+                }
+
+                var setSelect = document.getElementById("setName")
+                var sortedSets = allSets.sort((a,b) => Date.parse(b.ReleaseDate) - Date.parse(a.ReleaseDate))
+                                
+            
+                for(var i = 0; i < sortedSets.length; i++)
+                {
+                    setSelect.options[setSelect.options.length] = new Option(sortedSets[i].Name + " (" + sortedSets[i].PTCGO_Code + ")", sortedSets[i].PTCGO_Code);
+                }
+                
+            }).catch(err => {
+                console.log(err)
+            });
+}
+
+function streamerCardViewOnload()
+{
+    GetAllSetsButSetCode();
+    GetAllCards();
+}
+
+function setCardImageForStreamerViewer()
+{
+    var imageLink = document.getElementById('cardName').value;
+    var img = document.getElementById("cardImage")
+    img.src = imageLink
+}
+
+function getGuidFromUrl()
+{
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    return urlParams.get('guid')
+}
+
+function SendToTwitch()
+{
+    var guid = document.getElementById("streamerGuid").value
+    var imageLink = document.getElementById("cardImage").src
+    var myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+
+    var raw = JSON.stringify({
+    "ImageLink": imageLink
+    });
+
+    var requestOptions = {
+    method: 'POST',
+    headers: myHeaders,
+    body: raw,
+    redirect: 'follow'
+    };
+
+    fetch(apiUrl+"/deckutils/streamer/setImage/"+guid, requestOptions)
+    .then(response => response.text())
+    .then(result => {
+        if(result == 'false')
+        {            
+            alert("Incorrect GUID Provided.");
+        }
+        else if (result == "true")
+        {
+            alert("Image updated successfully!")
+        }
+    })
+    .catch(error => console.log('error', error));
+}
+
+function DisplayTwitchImage()
+{
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    const guid = urlParams.get('guid')
+    var img = document.getElementById("cardImage")
+
+    var requestOptions = {
+        method: 'GET',
+        redirect: 'follow'
+      };
+      
+      fetch(apiUrl+"/deckutils/streamer/getImage/"+guid, requestOptions)
+      .then(response => {
+        return response.json();
+        }).then(data => {
+            img.src = data.cardImage
+            
+        }).catch(err => {
+            console.log(err)
+        });
+    }

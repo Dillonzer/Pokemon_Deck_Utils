@@ -1,38 +1,43 @@
 <!DOCTYPE html>
 <html>
-<title>Pokemon Deck Utils | Set Viewer</title>
+<title>Pokemon Deck Utils | Stream Card Viewer</title>
 <link rel="shortcut icon" type="image/jpg" href="./images/Logo.png"/>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="style.css">
 <script src="scripts.js"></script>
+<body onload=streamerCardViewOnload()>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<body onload="GetAllSets()">
 <div class="topbanner">
-    <h1>Set Viewer</h1>
+    <h1>Stream Card Viewer</h1>
 </div>
 <div class="navbar">
     <ul>
         <li><a href="./index.html">Home</a></li>
         <li><a href="./howtouse.html">How to Use</a></li>
         <li><a href="./prizetracker.html">Prize Tracker</a></li>
-        <li><a class="active">Set Viewer</a></li>
+        <li><a href="./setviewer.html">Set Viewer</a></li>
         <li><a href="./deckwizard.html">Deck Wizard</a></li>
-        <li><a href="./streamerCardView.html">Stream Card Viewer</a></li>
+        <li><a class="active">Stream Card Viewer</a></li>
      </ul>
 </div>
 <div id="mainBody" class="mainBody" style="display: flex;position: relative;/*! transform: translateX(-20%); */">
     <div style="position: absolute">
         <label for="setName">Please select a Set:</label>
-        <select id="setName" onchange="createAllSetTable(this)">
+        <select id="setName" onchange=GetCardsInSet()>
             <option value="" disabled selected>Please select a Set</option>
         </select>
+        <label for="cardName">Please select a Card:</label>
+        <select id="cardName" onchange=setCardImageForStreamerViewer()>
+            <option value="" disabled selected>Please select a Card</option>
+        </select>
     </div>
-    <br />
-    <div id="setView" style="margin:5px">
-        <div id="setviewtable"></div>
+    <div class="cardView">
+        <img id="cardImage" class="cardSize"/>
     </div>
-    <div class="centerScreen">
-        <img id="centeredCard" style="display: none"; onclick="hideCenterCard()"/>
+    <div style="float:right; padding-top: 50px; padding-left: 50px;">       
+        <label for="streamerGuid">Please put in your provided GUID from Dillon:</label><br><br>
+        <textarea id="streamerGuid" style="height:15px; width: 500px;resize: none;"></textarea><br>
+        <button id="sendToTwitch" class="standardButton" onclick="SendToTwitch()">Send to Twitch</button>
     </div>
 </div>
 <div class="footer">
