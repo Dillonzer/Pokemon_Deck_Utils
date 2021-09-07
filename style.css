@@ -216,6 +216,19 @@
     font-weight: bold;
 }
 
+#cardName {
+  width: 320px;
+  height: 30px;
+  font-size: 110%;
+  padding-left: 2px;
+  margin-bottom: 10px;
+  border-radius: 7px;
+  border:3px solid #cd8f00;
+  background-color: #344780;
+  color:#f2f2f2;
+  font-weight: bold;
+}
+
 #deckWizardCardName {
   width: 320px;
   height: 30px;
@@ -331,4 +344,12 @@
   100% {
     opacity: 0;
   }
+}
+
+.cardSize {   
+  padding-top: 60px;  
+  width: 340px;
+  height: 480px;
+  border: none;
+  background: none;
 }
