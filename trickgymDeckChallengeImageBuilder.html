@@ -1,0 +1,279 @@
+<html>
+<head>
+    <style>
+    #trickygymTable{
+        align-content: flex-start;
+        display: flex;
+        flex-wrap: wrap;
+        flex-direction: row;
+        padding-left: 50px;
+      }
+  
+      #trickygymTable div {
+        position: relative;
+        height: 150px;
+        width: 100px;
+        margin: 1px;
+      }
+  
+      #trickygymTable div>span {
+        position:absolute;
+        right:10px;
+        bottom:10px;
+        padding:0px 15px;
+        border-radius:75%;
+        z-index:10;
+        background:black;
+        border-color: white;
+        border-style: solid;
+        color:white;
+        font-size:1.5em;
+        pointer-events:none;   
+      }
+
+      .card {
+      height: 100%;
+      width: 100%;
+    }
+
+    .trickyGymLogo {
+      height: 100%;
+      width: 100%;
+    }
+
+    .trickyGymLogoDiv
+    {        
+        padding-top: 5px !important;
+        width: 200px !important;
+    }
+
+    textarea {
+        resize: none;
+    }
+
+    .centerScreen {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    /* bring your own prefixes */
+    transform: translate(-50%, -50%);
+    z-index: 1000;
+    }
+
+    #centeredCard
+    {
+    height: 225%;
+    width: 75%;
+    }
+
+    .blur {
+    filter: blur(8px);
+    -webkit-filter: blur(8px);
+    }
+
+    </style> 
+    <script src="https://cdn.jsdelivr.net/npm/dom-to-image@2.6.0/src/dom-to-image.min.js"></script>
+  
+    <script>
+        let apiUrl = "https://ptcg-api.herokuapp.com"
+        let trickyGymTable;
+        let mainBody;
+
+        function init(){
+            prizeTable = document.getElementById('prizeselectortable');
+            trickyGymTable = document.getElementById('trickygymTable');
+            mainBody = document.getElementById('mainBody')
+
+        }
+        
+        function Decklist()
+        {
+            this.Cards=[]
+
+            this.addCards = function (newObject) {
+                this.Cards.push(newObject);
+            };
+        }
+
+        function Card(name, set, number, imageLink, deckCount)
+        {
+            this.Name = name;
+            this.Set = set;
+            this.Number = number;
+            this.ImageLink = imageLink;
+            this.DeckCount = deckCount;
+        }
+
+        function ReplaceEnergySymbols(decklist)
+        {
+            decklist = decklist.replaceAll("Unit Energy {F}{D}{Y}", "Unit Energy FDY")
+            decklist = decklist.replaceAll("Unit Energy {G}{R}{W}", "Unit Energy GRW")
+            decklist = decklist.replaceAll("Unit Energy {L}{P}{M}", "Unit Energy LPM")
+            decklist = decklist.replaceAll("Blend Energy {G} {R} {P} {D}", "Blend Energy GRPD")
+            decklist = decklist.replaceAll("Blend Energy {W} {L} {F} {M}", "Blend Energy WLFM")
+            decklist = decklist.replaceAll("{D}", "Darkness")
+            decklist = decklist.replaceAll("{G}", "Grass")
+            decklist = decklist.replaceAll("{M}", "Metal")
+            decklist = decklist.replaceAll("{R}", "Fire")
+            decklist = decklist.replaceAll("{C}", "Colorless")
+            decklist = decklist.replaceAll("{F}", "Fighting")
+            decklist = decklist.replaceAll("{W}", "Water")
+            decklist = decklist.replaceAll("{L}", "Lightning")
+            decklist = decklist.replaceAll("{P}", "Psychic")
+            decklist = decklist.replaceAll(" Team Flare Gear", "")
+            decklist = decklist.replaceAll(" Team Flare Hyper Gear", "")
+
+            return decklist
+        }
+
+        function CreateTrickyGymDecklistObject()
+        {
+            trickyGymTable.innerHTML="";
+            let decklistText = document.getElementById('decklist').value;
+            let decklist = new Decklist()
+        
+            decklistText = ReplaceEnergySymbols(decklistText)
+        
+            let myHeaders = new Headers();
+            myHeaders.append("Content-Type", "application/json");
+        
+            let raw = JSON.stringify({"decklist": decklistText.trim()});
+            let requestOptions = {
+            method: 'POST',
+            headers: myHeaders,
+            body: raw,
+            redirect: 'follow'
+            };
+        
+            var checked = false
+        
+            fetch(apiUrl+"/deckutils/generateDecklist?unordered="+checked, requestOptions)
+            .then(response => {
+                return response.json()
+                })
+            .then(data => {
+                for(let i = 0; i < data["cards"].length; i++)
+                {
+                    decklist.addCards(new Card(data["cards"][i].name, data["cards"][i].set["name"], data["cards"][i].number, data["cards"][i].imageUrlHiRes, data["cards"][i].deckCount))
+                }    
+        
+                CreateTrickyGymTable(decklist)
+            })
+            .catch(error => console.log('error', error));
+        }
+        
+        async function CreateTrickyGymTable(decklist)
+        {
+            if(typeof decklist == 'undefined')
+            {
+                //show error message
+                alert("The decklist is invalid.")
+                return
+            }   
+
+            let fullList = decklist.Cards;
+            for(let i = 0; i < fullList.length; i++)
+            {
+                let card = fullList[i]
+                let cardDiv = document.createElement('div');
+                let cardImage = document.createElement('img');//CREATE CARD IMAGE
+                cardImage.src = card.ImageLink
+                cardImage.className = "card"
+                cardImage.onclick = function () {growCard(card)}
+                cardDiv.appendChild(cardImage);
+                if(card.DeckCount > 1)
+                {
+                    let cardAmountSpan = document.createElement('span');//CREATE CARD AMOUNT SPAN
+                    cardAmountSpan.innerHTML = card.DeckCount
+                    cardDiv.appendChild(cardAmountSpan);
+                }
+                trickyGymTable.appendChild(cardDiv);
+            }
+            trickyGymTable.style.display = "flex"
+            let trickyGymImageDiv = document.createElement('div')
+            trickyGymImageDiv.className = "trickyGymLogoDiv"
+            let trickyGymImage = document.createElement('img')
+            trickyGymImage.src = "https://pkmn-tcg-api-images.sfo2.cdn.digitaloceanspaces.com/%21Logos/TrickyGym_FullColor.png"
+            trickyGymImage.class = "trickyGymLogo"
+            trickyGymImageDiv.appendChild(trickyGymImage)
+            trickyGymTable.appendChild(trickyGymImageDiv);
+            document.getElementById("screenshot").style.display = "block"
+        }
+        
+        function SaveToImage() {
+
+            const scale = 2    
+            const node = document.getElementById("trickygymTable")
+
+            const style = {
+                transform: 'scale('+scale+')',
+                transformOrigin: 'top left',
+                width: node.offsetWidth + "px",
+                height: node.offsetHeight + "px"
+            }
+
+            const param = {
+                height: node.offsetHeight * scale,
+                width: node.offsetWidth * scale,
+                quality: 1,
+                style
+            }
+
+            try {
+                domtoimage.toPng(node, param)
+                    .then(function (dataUrl) {
+                        var link = document.createElement('a');
+                        link.download = 'glc-decklist.png';
+                        link.href = dataUrl;
+                        link.click();
+                    });                
+            } catch (error) {                
+                domtoimage.toPng(node, param)
+                    .then(function (dataUrl) {
+                        var link = document.createElement('a');
+                        link.download = 'glc-decklist.png';
+                        link.href = dataUrl;
+                        link.click();
+                    });                
+            }
+        }
+
+        function growCard(card) 
+        {    
+            var centerCard = document.getElementById("centeredCard")
+            if(centerCard.style.display == "none")
+            {
+                centerCard.style.display = "block"
+                centerCard.src = card.ImageLink
+                mainBody.className += " blur"
+
+            }
+        }
+
+        function hideCenterCard()
+        {
+            var centerCard = document.getElementById("centeredCard")
+            centerCard.style.display = "none"
+            mainBody.className = "mainBody";
+        }
+        </script>
+</head>
+    <body onload="init()">
+        <div id="mainBody" class="mainBody" style="display: flex;position: relative;/*! transform: translateX(-20%); */">
+            <div style="display: flex;min-width: 15%;max-width: 15%;">
+                <div style="position: relative;width: 100%;">
+                    <label for="decklist">Post your decklist here:</label>
+                    <textarea id="decklist" style="height: 397px; width: 227px;"></textarea>
+                    <button id="submitDecklist" onclick="CreateTrickyGymDecklistObject()">Submit Decklist</button>
+                </div>
+            </div> 
+            <div id="trickygymTable"></div> 
+        </div>
+        
+        <div class="centerScreen">
+            <img id="centeredCard" style="display: none"; onclick="hideCenterCard()"/>
+        </div>
+        <br />
+        <button id="screenshot" onclick="SaveToImage()" style="display: none; float:right;">Save as Image</button>
+    </body>
+</html> 
