@@ -253,8 +253,8 @@
 
 #centeredCard
 {
-  height: 225%;
-  width: 75%;
+  height: 85%;
+  width: 50%;
 }
 
 .blur {
@@ -346,10 +346,25 @@
   }
 }
 
-.cardSize {   
-  padding-top: 60px;  
+.cardSize { 
+  margin-right: 20px;    
   width: 340px;
   height: 480px;
   border: none;
   background: none;
+}
+
+#cardViewTable{
+  align-content: flex-start;
+  padding-top: 39px;
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+}
+
+#cardViewTable img {
+  position: relative;
+  height: 150px;
+  width: 100px;
+  margin: 1px;
 }
