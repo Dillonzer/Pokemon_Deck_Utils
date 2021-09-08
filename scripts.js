@@ -628,7 +628,21 @@ function DisplayAllCardsForStreamViewer()
 {
     setViewTable.innerHTML="";
     searchName = document.getElementById("cardSearchValue").value
-    var cardsInSet = allCards.filter(cards => cards.Name.toLowerCase().includes(searchName.toLowerCase()))
+    var cardsInSet = []
+    if(searchName.toLowerCase() == "n")
+    {
+        cardsInSet = allCards.filter(cards => cards.Name.toLowerCase() == "n")
+    }
+    else if (searchName.length >= 3)
+    {        
+        cardsInSet = allCards.filter(cards => cards.Name.toLowerCase().includes(searchName.toLowerCase()))
+    }
+    else
+    {
+        alert("Please enter more than 3 characters when searching for a card. \nExceptions:\n- N")
+        return
+    }
+
     for(let i = 0; i < cardsInSet.length; i++)
     {
         let card = cardsInSet[i]
