@@ -628,7 +628,7 @@ function DisplayAllCardsForStreamViewer()
 {
     setViewTable.innerHTML="";
     searchName = document.getElementById("cardSearchValue").value
-    var cardsInSet = allCards.filter(cards => cards.Name.toLowerCase() === searchName.toLowerCase())
+    var cardsInSet = allCards.filter(cards => cards.Name.toLowerCase().includes(searchName.toLowerCase()))
     for(let i = 0; i < cardsInSet.length; i++)
     {
         let card = cardsInSet[i]
