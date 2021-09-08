@@ -438,6 +438,8 @@ function GetAllCards()
                     allCards.push(new Card(data[index].name, data[index].set.ptcgoCode, data[index].number, data[index].imageUrlHiRes, 0));
                 }  
                 
+                FinishLoadingStreamerCardStuff()
+                
             }).catch(err => {
                 console.log(err)
             });
@@ -484,8 +486,17 @@ function GetAllSetsButSetCode()
 
 function streamerCardViewOnload()
 {
+    setViewTable = document.getElementById("setviewtable")
     GetAllSetsButSetCode();
-    GetAllCards();
+    GetAllCards();    
+}
+
+function FinishLoadingStreamerCardStuff()
+{
+    var mainBody = document.getElementById("mainBody")
+    var loading = document.getElementById("loading")
+    mainBody.style.display = "flex"
+    loading.style.display = "none"
 }
 
 function setCardImageForStreamerViewer()
@@ -493,6 +504,7 @@ function setCardImageForStreamerViewer()
     var imageLink = document.getElementById('cardName').value;
     var img = document.getElementById("cardImage")
     img.src = imageLink
+    document.getElementById("sentToTwitch").innerHTML = ""
 }
 
 function getGuidFromUrl()
@@ -506,6 +518,15 @@ function SendToTwitch()
 {
     var guid = document.getElementById("streamerGuid").value
     var imageLink = document.getElementById("cardImage").src
+    var nonSearch = document.getElementById("nonSearch")
+    var search = document.getElementById("search")
+
+    if(search.checked)
+    {
+        guid = document.getElementById("streamerGuid2").value
+        var imageLink = document.getElementById("centeredCard").src
+        
+    }
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
 
@@ -525,14 +546,38 @@ function SendToTwitch()
     .then(result => {
         if(result == 'false')
         {            
-            alert("Incorrect GUID Provided.");
+            if(search.checked)
+            {
+                document.getElementById("sentToTwitchCenterScreen").innerHTML = "Error sending to Twitch. Incorrect GUID. If you believe this is incorrect please contact Dillon."
+            }
+            else if (nonSearch.checked)
+            {
+
+                document.getElementById("sentToTwitch").innerHTML = "Error sending to Twitch. Incorrect GUID. If you believe this is incorrect please contact Dillon."
+            }
         }
         else if (result == "true")
         {
-            alert("Image updated successfully!")
+            if(search.checked)
+            {
+                document.getElementById("sentToTwitchCenterScreen").innerHTML = "Success!"
+            }
+            else if (nonSearch.checked)
+            {
+                document.getElementById("sentToTwitch").innerHTML = "Success!"
+            }
         }
     })
-    .catch(error => console.log('error', error));
+    .catch(error =>{ 
+        if(search.checked)
+        {
+            document.getElementById("sentToTwitchCenterScreen").innerHTML = "Error! "+error
+        }
+        else if (nonSearch.checked)
+        {
+            document.getElementById("sentToTwitch").innerHTML = "Error! "+error
+        }
+    })
 }
 
 function DisplayTwitchImage()
@@ -556,4 +601,71 @@ function DisplayTwitchImage()
         }).catch(err => {
             console.log(err)
         });
+}
+
+function SwitchCardViewerStyle()
+{
+    var nonSearch = document.getElementById("nonSearch")
+    var search = document.getElementById("search")
+    var nonSearchView = document.getElementById("search_bySet")
+    var searchView = document.getElementById("search_byCard")
+
+    if(nonSearch.checked)
+    {
+        searchView.style.display = "none"
+        nonSearchView.style.display = "block"
     }
+    else if (search.checked)
+    {
+        searchView.style.display = "block"
+        nonSearchView.style.display = "none"
+    }
+
+
+}
+
+function DisplayAllCardsForStreamViewer()
+{
+    setViewTable.innerHTML="";
+    searchName = document.getElementById("cardSearchValue").value
+    var cardsInSet = allCards.filter(cards => cards.Name.toLowerCase() === searchName.toLowerCase())
+    for(let i = 0; i < cardsInSet.length; i++)
+    {
+        let card = cardsInSet[i]
+        let cardImage = document.createElement('img');//CREATE CARD IMAGE
+        cardImage.src = card.ImageLink            
+        cardImage.onclick = function () {growCardWithSetStreamerBox(card)}
+        cardImage.className = "card"
+        setViewTable.appendChild(cardImage);
+    }
+}
+
+function DisplayAllCardsForStreamViewerKeyClick(event)
+{
+    if (event.keyCode === 13) {
+        // Cancel the default action, if needed
+        event.preventDefault();
+        DisplayAllCardsForStreamViewer()
+    }
+}
+
+function growCardWithSetStreamerBox(card) 
+{    
+    document.getElementById("sentToTwitchCenterScreen").innerHTML = ""
+    var centerCard = document.getElementById("centeredCard")
+    var centerDiv = document.getElementById("centerScreen")
+    if(centerDiv.style.display == "none")
+    {
+        centerDiv.style.display = "block"
+        centerCard.src = card.ImageLink
+        setViewTable.className += " blur"
+
+    }
+}
+
+function hideCenterCardStreamerBox()
+{
+    var centerDiv = document.getElementById("centerScreen")
+    centerDiv.style.display = "none"
+    setViewTable.className = "";
+}
