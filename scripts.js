@@ -36,14 +36,26 @@ let prizeTable;
 let setViewTable;
 let prizedCards=[];
 let blankImageLocation="./images/default-card-image.png";
-let apiUrl = "https://ptcg-api.herokuapp.com"
+let apiUrl = "https://dev-ptcg-api.herokuapp.com"
 let allSets = [];
 let deckWizardCopy = ""
 let deckWizardMetaGameUrl = ""
 var allCards = []
 
+var token;
+var twitchUser;
+
 function init(){
     prizeTable = document.getElementById('prizeselectortable');
+	// Try to get the token from the URL
+	token = getToken();
+	// If the token has been given so change the display
+	if (token) {
+		document.getElementById('connectToTwitch').style.display = "none";
+        GetUserInformation()
+	} else { // Else we haven't been authorized yet
+		document.getElementById('connectToTwitch').style.display = "block";
+	}
 }
 
 function SubmitDecklist() {   
@@ -84,6 +96,17 @@ function CreateDecklistObject(decklistText)
     myHeaders.append("Content-Type", "application/json");
 
     let raw = JSON.stringify({"decklist": decklistText.trim()});
+
+    if(token)
+    {
+        let sendToTwitchRequst = {
+            method: 'POST',
+            headers: myHeaders,
+            body: raw,
+            redirect: 'follow'
+            }; 
+        fetch(apiUrl+"/deckutils/twitchIntegration/upsert/decklist/"+twitchUser.id, sendToTwitchRequst)
+    }
 
     let requestOptions = {
     method: 'POST',
@@ -157,11 +180,52 @@ function SetPrizeCards(card, cardAmountSpan)
         alert("Max amount of 6 Prize Cards")
         return
     }
+
+    
+    if(token && prizeCards.length == 6)
+    {   
+        let myHeaders = new Headers();
+        myHeaders.append("Content-Type", "application/json");
+        var raw = "\{ \"Prize1\": \""+prizeCards[0].Image+"\",\"Prize2\": \""+prizeCards[1].Image+"\",\"Prize3\": \""+prizeCards[2].Image+"\",\"Prize4\": \""+prizeCards[3].Image+"\",\"Prize5\": \""+prizeCards[4].Image+"\",\"Prize6\": \""+prizeCards[5].Image+"\",\"Prize1Taken\": "+prizeCards[0].Taken+",\"Prize2Taken\": "+prizeCards[1].Taken+",\"Prize3Taken\": "+prizeCards[2].Taken+",\"Prize4Taken\": "+prizeCards[3].Taken+",\"Prize5Taken\": "+prizeCards[4].Taken+",\"Prize6Taken\": "+prizeCards[5].Taken+"\}"
+
+        let sendToTwitchRequst = {
+            method: 'POST',
+            headers: myHeaders,
+            body: raw,
+            redirect: 'follow'
+            }; 
+        
+        fetch(apiUrl+"/deckutils/twitchIntegration/upsert/prizes/"+twitchUser.id, sendToTwitchRequst)
+    }
 }
 
-function TakePrizeCard(prizeCard)
+function TakePrizeCard(prizeCard, position)
 {
     prizeCard.classList.toggle("opaque");
+    if(prizeCards[position-1].Taken == true)
+    {
+        prizeCards[position-1].Taken = false;
+    }
+    else
+    {        
+        prizeCards[position-1].Taken = true;
+    }
+
+    if(token && prizeCards.length == 6)
+    {   
+        let myHeaders = new Headers();
+        myHeaders.append("Content-Type", "application/json");
+        var raw = "\{ \"Prize1\": \""+prizeCards[0].Image+"\",\"Prize2\": \""+prizeCards[1].Image+"\",\"Prize3\": \""+prizeCards[2].Image+"\",\"Prize4\": \""+prizeCards[3].Image+"\",\"Prize5\": \""+prizeCards[4].Image+"\",\"Prize6\": \""+prizeCards[5].Image+"\",\"Prize1Taken\": "+prizeCards[0].Taken+",\"Prize2Taken\": "+prizeCards[1].Taken+",\"Prize3Taken\": "+prizeCards[2].Taken+",\"Prize4Taken\": "+prizeCards[3].Taken+",\"Prize5Taken\": "+prizeCards[4].Taken+",\"Prize6Taken\": "+prizeCards[5].Taken+"\}"
+
+        let sendToTwitchRequst = {
+            method: 'POST',
+            headers: myHeaders,
+            body: raw,
+            redirect: 'follow'
+            }; 
+        
+        fetch(apiUrl+"/deckutils/twitchIntegration/upsert/prizes/"+twitchUser.id, sendToTwitchRequst)
+    }
 }
 
 function ResetPrizeCards()
@@ -172,6 +236,23 @@ function ResetPrizeCards()
         prize.src=blankImageLocation;
         prize.classList.remove("opaque");
     }
+
+    if(token)
+    {   
+        let myHeaders = new Headers();
+        myHeaders.append("Content-Type", "application/json");
+        var raw = "\{ \"Prize1\": \"/images/cardBack.png\",\"Prize2\": \"/images/cardBack.png\",\"Prize3\": \"/images/cardBack.png\",\"Prize4\": \"/images/cardBack.png\",\"Prize5\": \"/images/cardBack.png\",\"Prize6\": \"/images/cardBack.png\",\"Prize1Taken\": false,\"Prize2Taken\": false,\"Prize3Taken\": false,\"Prize4Taken\": false,\"Prize5Taken\": false,\"Prize6Taken\": false\}"
+
+        let sendToTwitchRequst = {
+            method: 'POST',
+            headers: myHeaders,
+            body: raw,
+            redirect: 'follow'
+            }; 
+        
+        fetch(apiUrl+"/deckutils/twitchIntegration/upsert/prizes/"+twitchUser.id, sendToTwitchRequst)
+    }
+    
 }
 
 function resetPrizeSelectorTable(){
@@ -191,6 +272,22 @@ function returnPrizeCards(){
     let len = prizeCards.length;
     for(let i=0;i<len;i++){
         returnLastPrize();
+    }
+    
+    if(token)
+    {   
+        let myHeaders = new Headers();
+        myHeaders.append("Content-Type", "application/json");
+        var raw = "\{ \"Prize1\": \"/images/cardBack.png\",\"Prize2\": \"/images/cardBack.png\",\"Prize3\": \"/images/cardBack.png\",\"Prize4\": \"/images/cardBack.png\",\"Prize5\": \"/images/cardBack.png\",\"Prize6\": \"/images/cardBack.png\",\"Prize1Taken\": false,\"Prize2Taken\": false,\"Prize3Taken\": false,\"Prize4Taken\": false,\"Prize5Taken\": false,\"Prize6Taken\": false\}"
+
+        let sendToTwitchRequst = {
+            method: 'POST',
+            headers: myHeaders,
+            body: raw,
+            redirect: 'follow'
+            }; 
+        
+        fetch(apiUrl+"/deckutils/twitchIntegration/upsert/prizes/"+twitchUser.id, sendToTwitchRequst)
     }
 }
 
@@ -682,4 +779,50 @@ function hideCenterCardStreamerBox()
     var centerDiv = document.getElementById("centerScreen")
     centerDiv.style.display = "none"
     setViewTable.className = "";
+}
+
+function LogIntoTwitch()
+{
+    window.open("https://id.twitch.tv/oauth2/authorize?response_type=token&client_id=ygoejvo56l7d6jrhsmvlix7ejv00nc&redirect_uri=https://dillonzer.github.io/Pokemon_Deck_Utils/prizetracker.html&scope=user:read:email")
+}
+
+// Parses the URL parameters and returns an object
+function parseParms(str) {
+	var pieces = str.split("&"), data = {}, i, parts;
+	// process each query pair
+	for (i = 0; i < pieces.length; i++) {
+		parts = pieces[i].split("=");
+		if (parts.length < 2) {
+			parts.push("");
+		}
+		data[decodeURIComponent(parts[0])] = decodeURIComponent(parts[1]);
+	}
+	return data;
+}
+
+// Returns the token from the URL hash
+function getToken() {
+	//substring(1) to remove the '#'
+	hash = parseParms(document.location.hash.substring(1));
+	return hash.access_token;
+}
+
+function GetUserInformation()
+{
+    var settings = {
+        "url": "https://api.twitch.tv/helix/users",
+        "method": "GET",
+        "timeout": 0,
+        "headers": {
+          "Client-Id": "ygoejvo56l7d6jrhsmvlix7ejv00nc",
+          "Authorization": "Bearer "+token
+        },
+      };
+      
+      $.ajax(settings).done(function (response) {
+        twitchUser = response.data[0];
+		document.getElementById('connectedToTwitch').style.display = "block";
+        document.getElementById('twitchPfp').src = twitchUser.profile_image_url
+        document.getElementById('twitchUsername').innerText = "Welcome " + twitchUser.display_name
+      });
 }

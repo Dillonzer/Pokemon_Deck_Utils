@@ -368,3 +368,38 @@
   width: 100px;
   margin: 1px;
 }
+
+.loginToTwitch {
+  border: #111111;
+  border-style: solid;
+  border-radius: 30px;
+  background-color: #6541a5;
+  color: white;
+  font-weight: bolder;
+  font-size: large;
+  width: 200px;
+  height: 50px;
+}
+
+.loginToTwitch:hover {  
+  background-color: #9146ff;
+}
+
+#twitchPfp {
+  border-radius: 50%;
+  float:right
+}
+
+#connectedToTwitch {
+  border: black;
+  border-style: solid;
+  border-radius: 20px;
+  background-color: #6541a5;
+  color: white;
+  width: 230px;
+  height: 50px;
+  padding-top: 3px;
+  padding-right: 5px;
+  padding-left: 5px;
+
+}
