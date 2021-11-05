@@ -278,7 +278,7 @@ function returnPrizeCards(){
     {   
         let myHeaders = new Headers();
         myHeaders.append("Content-Type", "application/json");
-        var raw = "\{ \"Prize1\": \"/images/cardBack.png\",\"Prize2\": \"/images/cardBack.png\",\"Prize3\": \"/images/cardBack.png\",\"Prize4\": \"/images/cardBack.png\",\"Prize5\": \"/images/cardBack.png\",\"Prize6\": \"/images/cardBack.png\",\"Prize1Taken\": false,\"Prize2Taken\": false,\"Prize3Taken\": false,\"Prize4Taken\": false,\"Prize5Taken\": false,\"Prize6Taken\": false\}"
+        var raw = "\{ \"Prize1\": \"images/cardBack.png\",\"Prize2\": \"images/cardBack.png\",\"Prize3\": \"images/cardBack.png\",\"Prize4\": \"images/cardBack.png\",\"Prize5\": \"images/cardBack.png\",\"Prize6\": \"images/cardBack.png\",\"Prize1Taken\": false,\"Prize2Taken\": false,\"Prize3Taken\": false,\"Prize4Taken\": false,\"Prize5Taken\": false,\"Prize6Taken\": false\}"
 
         let sendToTwitchRequst = {
             method: 'POST',
