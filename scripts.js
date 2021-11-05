@@ -42,8 +42,20 @@ let deckWizardCopy = ""
 let deckWizardMetaGameUrl = ""
 var allCards = []
 
+var token;
+var twitchUser;
+
 function init(){
     prizeTable = document.getElementById('prizeselectortable');
+	// Try to get the token from the URL
+	token = getToken();
+	// If the token has been given so change the display
+	if (token) {
+		document.getElementById('connectToTwitch').style.display = "none";
+        GetUserInformation()
+	} else { // Else we haven't been authorized yet
+		document.getElementById('connectToTwitch').style.display = "block";
+	}
 }
 
 function SubmitDecklist() {   
@@ -686,5 +698,46 @@ function hideCenterCardStreamerBox()
 
 function LogIntoTwitch()
 {
-    window.open("https://id.twitch.tv/oauth2/authorize?response_type=token&client_id=ygoejvo56l7d6jrhsmvlix7ejv00nc&redirect_uri=https://dillonzer.github.io/Pokemon_Deck_Utils/prizetracker.html&scope=user_read")
+    window.open("https://id.twitch.tv/oauth2/authorize?response_type=token&client_id=ygoejvo56l7d6jrhsmvlix7ejv00nc&redirect_uri=https://dillonzer.github.io/Pokemon_Deck_Utils/prizetracker.html&scope=user:read:email")
+}
+
+// Parses the URL parameters and returns an object
+function parseParms(str) {
+	var pieces = str.split("&"), data = {}, i, parts;
+	// process each query pair
+	for (i = 0; i < pieces.length; i++) {
+		parts = pieces[i].split("=");
+		if (parts.length < 2) {
+			parts.push("");
+		}
+		data[decodeURIComponent(parts[0])] = decodeURIComponent(parts[1]);
+	}
+	return data;
+}
+
+// Returns the token from the URL hash
+function getToken() {
+	//substring(1) to remove the '#'
+	hash = parseParms(document.location.hash.substring(1));
+	return hash.access_token;
+}
+
+function GetUserInformation()
+{
+    var settings = {
+        "url": "https://api.twitch.tv/helix/users",
+        "method": "GET",
+        "timeout": 0,
+        "headers": {
+          "Client-Id": "ygoejvo56l7d6jrhsmvlix7ejv00nc",
+          "Authorization": "Bearer "+token
+        },
+      };
+      
+      $.ajax(settings).done(function (response) {
+        twitchUser = response.data[0];
+		document.getElementById('connectedToTwitch').style.display = "block";
+        document.getElementById('twitchPfp').src = twitchUser.profile_image_url
+        document.getElementById('twitchUsername').innerText = "Welcome " + twitchUser.display_name
+      });
 }
