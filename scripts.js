@@ -36,7 +36,7 @@ let prizeTable;
 let setViewTable;
 let prizedCards=[];
 let blankImageLocation="./images/default-card-image.png";
-let apiUrl = "https://dev-ptcg-api.herokuapp.com"
+let apiUrl = "https://ptcg-api.herokuapp.com"
 let allSets = [];
 let deckWizardCopy = ""
 let deckWizardMetaGameUrl = ""
