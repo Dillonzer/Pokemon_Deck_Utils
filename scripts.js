@@ -683,3 +683,8 @@ function hideCenterCardStreamerBox()
     centerDiv.style.display = "none"
     setViewTable.className = "";
 }
+
+function LogIntoTwitch()
+{
+    window.open("https://id.twitch.tv/oauth2/authorize?response_type=token&client_id=ygoejvo56l7d6jrhsmvlix7ejv00nc&redirect_uri=https://dillonzer.github.io/Pokemon_Deck_Utils/prizetracker.html&scope=user_read")
+}
