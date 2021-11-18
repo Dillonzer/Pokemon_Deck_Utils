@@ -29,7 +29,9 @@
             <input type="radio" id="nonSearch" name="searching" value="nonSearch" checked onchange="SwitchCardViewerStyle()">
             <label for="nonSearch">By Set</label>
             <input type="radio" id="search" name="searching"  value="search" onchange="SwitchCardViewerStyle()">
-            <label for="search">By Card Name</label><br>
+            <label for="search">By Card Name</label>
+            <input type="radio" id="recent" name="searching"  value="recent" onchange="SwitchCardViewerStyle()">
+            <label for="recent">Recent Cards</label><br>
     </div>
     <div style="padding-top: 100px;" id="search_bySet">
         <label for="setName">Please select a Set:</label>
@@ -43,7 +45,7 @@
         <div>
             <img id="cardImage" class="cardSize" style="float:left;"/>
             <label for="streamerGuid">Please put in your provided GUID from Dillon:</label><br><br>
-            <input id="streamerGuid" style="height:15px; width: 500px;resize: none;" type="text"></input><br>
+            <input id="streamerGuid" style="height:15px; width: 500px;resize: none;" type="text" onchange="CopyGuidToOtherGuidFields1()"></input><br>
             <button id="sendToTwitch" class="standardButton" onclick="SendToTwitch()">Send to Twitch</button>
             <p id="sentToTwitch"></p>
         </div>
@@ -52,15 +54,27 @@
         <label for="cardSearchValue">Please type in a Card name:</label>
         <input type="text" id="cardSearchValue" style="height:15px; width: 500px; margin-right: 10px;"placeholder="Scyther" onkeypress="DisplayAllCardsForStreamViewerKeyClick(event)"></input><br /><br />
         <label for="streamerGuid2">Please put in your provided GUID from Dillon:</label>
-        <input id="streamerGuid2" style="height:15px; width: 500px;" type="text"></input><br/>
+        <input id="streamerGuid2" style="height:15px; width: 500px;" type="text" onchange="CopyGuidToOtherGuidFields2()"></input><br/>
         <button id="loadCardSearch" class="standardButton" style="width:100px" onclick=DisplayAllCardsForStreamViewer()>Search</button>
         <div id="setView" style="margin:5px">
-            <div id="setviewtable"></div>
+            <div id="setviewtable" class="flexCardTable"></div>
         </div>
         <div id="centerScreen" class="centerScreen" style="display: none"; >
-            <img id="centeredCard" onclick="hideCenterCardStreamerBox()"/>
+            <img id="centeredCard" class="centeredCard" onclick="hideCenterCardStreamerBox()"/>
             <button class="standardButton" onclick=SendToTwitch()>Send to Twitch</button>
             <p id="sentToTwitchCenterScreen"></p>
+        </div>
+    </div>
+    <div style="padding-top: 100px; display: none;" id="search_Recent">
+        <label for="streamerGuid3">Please put in your provided GUID from Dillon:</label>
+        <input id="streamerGuid3" style="height:15px; width: 500px;" type="text" onchange="CopyGuidToOtherGuidFields3()"></input><br/>
+        <div id="recentView" style="margin:5px">
+            <div id="recentViewTable" class="flexCardTable"></div>
+        </div>
+        <div id="centerScreenRecentCard" class="centerScreen" style="display: none"; >
+            <img id="centeredRecentCard" class="centeredCard" onclick="hideCenterCardStreamerBoxForRecentCards()"/>
+            <button class="standardButton" onclick=SendToTwitch()>Send to Twitch</button>
+            <p id="sentToTwitchCenterScreenRecentView"></p>
         </div>
     </div>
 </div>
