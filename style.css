@@ -188,7 +188,7 @@
       height: 50px;
    }
 
-   #setviewtable{
+   .flexCardTable{
     align-content: flex-start;
     padding-top: 39px;
     display: flex;
@@ -196,7 +196,7 @@
     flex-direction: row;
   }
 
-  #setviewtable img {
+  .flexCardTable img {
     position: relative;
     height: 150px;
     width: 100px;
@@ -251,7 +251,7 @@
   z-index: 1000;
 }
 
-#centeredCard
+.centeredCard
 {
   height: 85%;
   width: 50%;

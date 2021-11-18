@@ -41,6 +41,7 @@ let allSets = [];
 let deckWizardCopy = ""
 let deckWizardMetaGameUrl = ""
 var allCards = []
+var recentCards = []
 
 var token;
 var twitchUser;
@@ -57,6 +58,8 @@ function init(){
 		document.getElementById('connectToTwitch').style.display = "block";
 	}
 }
+
+//#region PrizeTracker
 
 function SubmitDecklist() {   
     resetPrizeSelectorTable();
@@ -310,6 +313,82 @@ function hideListInputMenu(){
     }
 }
 
+function ResetThisPrizeCard(position)
+{    
+    if(prizedCards.length < position)
+    {
+        return;
+    }
+
+    prizedCards[position-1].innerHTML++;
+    prizeCards.splice(position-1,1);
+    prizedCards.splice(position-1,1);
+
+    for(let i=position-1;i<6;i++)
+    {        
+        if(i+1 == 6)
+        {            
+            document.getElementsByClassName("prizeCard")[i].src= blankImageLocation
+        }
+        else
+        {            
+            document.getElementsByClassName("prizeCard")[i].src= document.getElementsByClassName("prizeCard")[i+1].src;
+        }
+        
+    }
+    
+}
+
+function LogIntoTwitch()
+{
+    window.open("https://id.twitch.tv/oauth2/authorize?response_type=token&client_id=ygoejvo56l7d6jrhsmvlix7ejv00nc&redirect_uri=https://dillonzer.github.io/Pokemon_Deck_Utils/prizetracker.html&scope=user:read:email")
+}
+
+// Parses the URL parameters and returns an object
+function parseParms(str) {
+	var pieces = str.split("&"), data = {}, i, parts;
+	// process each query pair
+	for (i = 0; i < pieces.length; i++) {
+		parts = pieces[i].split("=");
+		if (parts.length < 2) {
+			parts.push("");
+		}
+		data[decodeURIComponent(parts[0])] = decodeURIComponent(parts[1]);
+	}
+	return data;
+}
+
+// Returns the token from the URL hash
+function getToken() {
+	//substring(1) to remove the '#'
+	hash = parseParms(document.location.hash.substring(1));
+	return hash.access_token;
+}
+
+function GetUserInformation()
+{
+    var settings = {
+        "url": "https://api.twitch.tv/helix/users",
+        "method": "GET",
+        "timeout": 0,
+        "headers": {
+          "Client-Id": "ygoejvo56l7d6jrhsmvlix7ejv00nc",
+          "Authorization": "Bearer "+token
+        },
+      };
+      
+      $.ajax(settings).done(function (response) {
+        twitchUser = response.data[0];
+		document.getElementById('connectedToTwitch').style.display = "block";
+        document.getElementById('twitchPfp').src = twitchUser.profile_image_url
+        document.getElementById('twitchUsername').innerText = "Welcome " + twitchUser.display_name
+      });
+}
+
+//#endregion
+
+//#region Set Viewer
+
 function GetAllSets()
 {
     setViewTable = document.getElementById('setviewtable');
@@ -377,34 +456,12 @@ function hideCenterCard()
 {
     var centerCard = document.getElementById("centeredCard")
     centerCard.style.display = "none"
-    setViewTable.className = "";
+    setViewTable.className = "flexCardTable";
 }
 
-function ResetThisPrizeCard(position)
-{    
-    if(prizedCards.length < position)
-    {
-        return;
-    }
+//#endregion
 
-    prizedCards[position-1].innerHTML++;
-    prizeCards.splice(position-1,1);
-    prizedCards.splice(position-1,1);
-
-    for(let i=position-1;i<6;i++)
-    {        
-        if(i+1 == 6)
-        {            
-            document.getElementsByClassName("prizeCard")[i].src= blankImageLocation
-        }
-        else
-        {            
-            document.getElementsByClassName("prizeCard")[i].src= document.getElementsByClassName("prizeCard")[i+1].src;
-        }
-        
-    }
-    
-}
+//#region DeckWizard
 
 function GetAllDeckWizardCards()
 {
@@ -513,16 +570,25 @@ async function CreateDeckWizardDeckPicture(decklist)
 function CopyDeckWizardToClipboard()
 {
     var dummy = document.createElement("textarea");
-    // to avoid breaking orgain page when copying more words
-    // cant copy when adding below this code
-    // dummy.style.display = 'none'
     document.body.appendChild(dummy);
-    //Be careful if you use texarea. setAttribute('value', value), which works with "input" does not work with "textarea". – Eduard
     dummy.value = deckWizardCopy;
     dummy.select();
-    document.execCommand("copy");
-    alert("Copied the deck to the clipboard!");
+    navigator.clipboard.writeText("copy");
+    //change to copied
     document.body.removeChild(dummy);
+}
+
+//#endregion
+
+//#region StreamCardViewer
+
+//#region OnLoad
+
+function streamerCardViewOnload()
+{
+    setViewTable = document.getElementById("setviewtable")
+    GetAllSetsButSetCode();
+    GetAllCards();    
 }
 
 function GetAllCards()
@@ -542,19 +608,12 @@ function GetAllCards()
             });
 }
 
-function GetCardsInSet()
-{ 
-    var setCode = document.getElementById("setName").value
-    var cardSelect = document.getElementById("cardName")
-    var cardsInSet = allCards.filter(cards => cards.Set === setCode)
-    var sortedCardsInSet = cardsInSet.sort((a,b) => (a.Name > b.Name) ? 1 : ((b.Name > a.Name) ? -1 : 0))
-    cardSelect.options.length = 0;
-    for (let i = 0; i < sortedCardsInSet.length; i++)
-    {
-        cardSelect.options[cardSelect.options.length] = new Option(sortedCardsInSet[i].Name + " (" + sortedCardsInSet[i].Number + ")", sortedCardsInSet[i].ImageLink);
-    }
-    
-    setCardImageForStreamerViewer()
+function FinishLoadingStreamerCardStuff()
+{
+    var mainBody = document.getElementById("mainBody")
+    var loading = document.getElementById("loading")
+    mainBody.style.display = "flex"
+    loading.style.display = "none"
 }
 
 function GetAllSetsButSetCode()
@@ -581,19 +640,23 @@ function GetAllSetsButSetCode()
             });
 }
 
-function streamerCardViewOnload()
-{
-    setViewTable = document.getElementById("setviewtable")
-    GetAllSetsButSetCode();
-    GetAllCards();    
-}
+//#endregion
 
-function FinishLoadingStreamerCardStuff()
-{
-    var mainBody = document.getElementById("mainBody")
-    var loading = document.getElementById("loading")
-    mainBody.style.display = "flex"
-    loading.style.display = "none"
+//#region By Set
+
+function GetCardsInSet()
+{ 
+    var setCode = document.getElementById("setName").value
+    var cardSelect = document.getElementById("cardName")
+    var cardsInSet = allCards.filter(cards => cards.Set === setCode)
+    var sortedCardsInSet = cardsInSet.sort((a,b) => (a.Name > b.Name) ? 1 : ((b.Name > a.Name) ? -1 : 0))
+    cardSelect.options.length = 0;
+    for (let i = 0; i < sortedCardsInSet.length; i++)
+    {
+        cardSelect.options[cardSelect.options.length] = new Option(sortedCardsInSet[i].Name + " (" + sortedCardsInSet[i].Number + ")", sortedCardsInSet[i].ImageLink);
+    }
+    
+    setCardImageForStreamerViewer()
 }
 
 function setCardImageForStreamerViewer()
@@ -604,122 +667,9 @@ function setCardImageForStreamerViewer()
     document.getElementById("sentToTwitch").innerHTML = ""
 }
 
-function getGuidFromUrl()
-{
-    const queryString = window.location.search;
-    const urlParams = new URLSearchParams(queryString);
-    return urlParams.get('guid')
-}
+//#endregion
 
-function SendToTwitch()
-{
-    var guid = document.getElementById("streamerGuid").value
-    var imageLink = document.getElementById("cardImage").src
-    var nonSearch = document.getElementById("nonSearch")
-    var search = document.getElementById("search")
-
-    if(search.checked)
-    {
-        guid = document.getElementById("streamerGuid2").value
-        var imageLink = document.getElementById("centeredCard").src
-        
-    }
-    var myHeaders = new Headers();
-    myHeaders.append("Content-Type", "application/json");
-
-    var raw = JSON.stringify({
-    "ImageLink": imageLink
-    });
-
-    var requestOptions = {
-    method: 'POST',
-    headers: myHeaders,
-    body: raw,
-    redirect: 'follow'
-    };
-
-    fetch(apiUrl+"/deckutils/streamer/setImage/"+guid, requestOptions)
-    .then(response => response.text())
-    .then(result => {
-        if(result == 'false')
-        {            
-            if(search.checked)
-            {
-                document.getElementById("sentToTwitchCenterScreen").innerHTML = "Error sending to Twitch. Incorrect GUID. If you believe this is incorrect please contact Dillon."
-            }
-            else if (nonSearch.checked)
-            {
-
-                document.getElementById("sentToTwitch").innerHTML = "Error sending to Twitch. Incorrect GUID. If you believe this is incorrect please contact Dillon."
-            }
-        }
-        else if (result == "true")
-        {
-            if(search.checked)
-            {
-                document.getElementById("sentToTwitchCenterScreen").innerHTML = "Success!"
-            }
-            else if (nonSearch.checked)
-            {
-                document.getElementById("sentToTwitch").innerHTML = "Success!"
-            }
-        }
-    })
-    .catch(error =>{ 
-        if(search.checked)
-        {
-            document.getElementById("sentToTwitchCenterScreen").innerHTML = "Error! "+error
-        }
-        else if (nonSearch.checked)
-        {
-            document.getElementById("sentToTwitch").innerHTML = "Error! "+error
-        }
-    })
-}
-
-function DisplayTwitchImage()
-{
-    const queryString = window.location.search;
-    const urlParams = new URLSearchParams(queryString);
-    const guid = urlParams.get('guid')
-    var img = document.getElementById("cardImage")
-
-    var requestOptions = {
-        method: 'GET',
-        redirect: 'follow'
-      };
-      
-      fetch(apiUrl+"/deckutils/streamer/getImage/"+guid, requestOptions)
-      .then(response => {
-        return response.json();
-        }).then(data => {
-            img.src = data.cardImage
-            
-        }).catch(err => {
-            console.log(err)
-        });
-}
-
-function SwitchCardViewerStyle()
-{
-    var nonSearch = document.getElementById("nonSearch")
-    var search = document.getElementById("search")
-    var nonSearchView = document.getElementById("search_bySet")
-    var searchView = document.getElementById("search_byCard")
-
-    if(nonSearch.checked)
-    {
-        searchView.style.display = "none"
-        nonSearchView.style.display = "block"
-    }
-    else if (search.checked)
-    {
-        searchView.style.display = "block"
-        nonSearchView.style.display = "none"
-    }
-
-
-}
+//#region By Card Name
 
 function DisplayAllCardsForStreamViewer()
 {
@@ -778,51 +728,233 @@ function hideCenterCardStreamerBox()
 {
     var centerDiv = document.getElementById("centerScreen")
     centerDiv.style.display = "none"
-    setViewTable.className = "";
+    setViewTable.className = "flexCardTable";
 }
 
-function LogIntoTwitch()
+//#endregion
+
+//#region Recent Cards
+
+function LoadRecentCardsForPrizeViewer()
 {
-    window.open("https://id.twitch.tv/oauth2/authorize?response_type=token&client_id=ygoejvo56l7d6jrhsmvlix7ejv00nc&redirect_uri=https://dillonzer.github.io/Pokemon_Deck_Utils/prizetracker.html&scope=user:read:email")
+    var recentViewTable = document.getElementById("recentViewTable")
+    recentViewTable.innerHTML = ""
+    var recentCardsFromStorage = JSON.parse(localStorage.getItem('recentCards'))
+
+    for(let i = 0; i < recentCardsFromStorage.length; i++)
+    {
+        let card = recentCardsFromStorage[i]
+        let cardImage = document.createElement('img');//CREATE CARD IMAGE
+        cardImage.src = card            
+        cardImage.onclick = function () {growCardWithSetStreamerBoxForRecentCards(card)}
+        cardImage.className = "card"
+        recentViewTable.appendChild(cardImage);
+    }
 }
 
-// Parses the URL parameters and returns an object
-function parseParms(str) {
-	var pieces = str.split("&"), data = {}, i, parts;
-	// process each query pair
-	for (i = 0; i < pieces.length; i++) {
-		parts = pieces[i].split("=");
-		if (parts.length < 2) {
-			parts.push("");
-		}
-		data[decodeURIComponent(parts[0])] = decodeURIComponent(parts[1]);
-	}
-	return data;
+function growCardWithSetStreamerBoxForRecentCards(card) 
+{    
+    var recentViewTable = document.getElementById("recentViewTable")
+    document.getElementById("sentToTwitchCenterScreenRecentView").innerHTML = ""
+    var centerCard = document.getElementById("centeredRecentCard")
+    var centerDiv = document.getElementById("centerScreenRecentCard")
+    if(centerDiv.style.display == "none")
+    {
+        centerDiv.style.display = "block"
+        centerCard.src = card
+        recentViewTable.className += " blur"
+
+    }
 }
 
-// Returns the token from the URL hash
-function getToken() {
-	//substring(1) to remove the '#'
-	hash = parseParms(document.location.hash.substring(1));
-	return hash.access_token;
-}
-
-function GetUserInformation()
+function hideCenterCardStreamerBoxForRecentCards()
 {
-    var settings = {
-        "url": "https://api.twitch.tv/helix/users",
-        "method": "GET",
-        "timeout": 0,
-        "headers": {
-          "Client-Id": "ygoejvo56l7d6jrhsmvlix7ejv00nc",
-          "Authorization": "Bearer "+token
-        },
+    var recentViewTable = document.getElementById("recentViewTable")
+    var centerDiv = document.getElementById("centerScreenRecentCard")
+    centerDiv.style.display = "none"
+    recentViewTable.className = "flexCardTable";
+}
+
+//#endregion
+
+function CopyGuidToOtherGuidFields1()
+{    
+    var nonSearchGuid = document.getElementById("streamerGuid")
+    var searchGuid = document.getElementById("streamerGuid2")
+    var reviewGuid = document.getElementById("streamerGuid3")
+
+    searchGuid.value = nonSearchGuid.value
+    reviewGuid.value = nonSearchGuid.value
+}
+
+function CopyGuidToOtherGuidFields2()
+{    
+    var nonSearchGuid = document.getElementById("streamerGuid")
+    var searchGuid = document.getElementById("streamerGuid2")
+    var reviewGuid = document.getElementById("streamerGuid3")
+    
+    nonSearchGuid.value = searchGuid.value
+    reviewGuid.value = searchGuid.value
+}
+
+function CopyGuidToOtherGuidFields3()
+{    
+    var nonSearchGuid = document.getElementById("streamerGuid")
+    var searchGuid = document.getElementById("streamerGuid2")
+    var reviewGuid = document.getElementById("streamerGuid3")
+
+    searchGuid.value = reviewGuid.value
+    nonSearchGuid.value = reviewGuid.value
+}
+
+function SwitchCardViewerStyle()
+{
+    var nonSearch = document.getElementById("nonSearch")
+    var search = document.getElementById("search")
+    var recent = document.getElementById("recent")
+    var nonSearchView = document.getElementById("search_bySet")
+    var searchView = document.getElementById("search_byCard")
+    var recentView = document.getElementById("search_Recent")
+
+    if(nonSearch.checked)
+    {
+        searchView.style.display = "none"
+        nonSearchView.style.display = "block"
+        recentView.style.display = "none"
+    }
+    else if (search.checked)
+    {
+        searchView.style.display = "block"
+        nonSearchView.style.display = "none"
+        recentView.style.display = "none"
+    }
+    else if (recent.checked)
+    {
+        recentView.style.display = "block"
+        searchView.style.display = "none"
+        nonSearchView.style.display = "none"
+        LoadRecentCardsForPrizeViewer()
+    }
+
+
+
+}
+
+function SendToTwitch()
+{
+    var guid = document.getElementById("streamerGuid").value
+    var imageLink = document.getElementById("cardImage").src
+    var nonSearch = document.getElementById("nonSearch")
+    var search = document.getElementById("search")
+    var recent = document.getElementById("recent")
+
+    if(search.checked)
+    {
+        guid = document.getElementById("streamerGuid2").value
+        var imageLink = document.getElementById("centeredCard").src
+        
+    }
+    else if(recent.checked)
+    {
+        guid = document.getElementById("streamerGuid3").value
+        var imageLink = document.getElementById("centeredRecentCard").src
+
+    }
+
+    var myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+
+    var raw = JSON.stringify({
+    "ImageLink": imageLink
+    });
+
+    var requestOptions = {
+    method: 'POST',
+    headers: myHeaders,
+    body: raw,
+    redirect: 'follow'
+    };
+
+    fetch(apiUrl+"/deckutils/streamer/setImage/"+guid, requestOptions)
+    .then(response => response.text())
+    .then(result => {
+        if(result == 'false' || result == '')
+        {            
+            if(search.checked)
+            {
+                document.getElementById("sentToTwitchCenterScreen").innerHTML = "Error sending to Twitch. Incorrect GUID. If you believe this is incorrect please contact Dillon."
+            }
+            else if (nonSearch.checked)
+            {
+
+                document.getElementById("sentToTwitch").innerHTML = "Error sending to Twitch. Incorrect GUID. If you believe this is incorrect please contact Dillon."
+            }
+            else if(recent.checked)
+            {
+                document.getElementById("sentToTwitchCenterScreenRecentView").innerHTML = "Error sending to Twitch. Incorrect GUID. If you believe this is incorrect please contact Dillon."
+        
+            }
+        
+        }
+        else if (result == "true")
+        {
+            if(!recentCards.includes(imageLink))
+            {
+                recentCards.push(imageLink)
+                localStorage.setItem('recentCards', JSON.stringify(recentCards))
+            }
+
+            if(search.checked)
+            {
+                document.getElementById("sentToTwitchCenterScreen").innerHTML = "Success!"
+            }
+            else if (nonSearch.checked)
+            {
+                document.getElementById("sentToTwitch").innerHTML = "Success!"
+            }
+            else if(recent.checked)
+            {
+                document.getElementById("sentToTwitchCenterScreenRecentView").innerHTML = "Success!"
+            }
+        }
+    })
+    .catch(error =>{ 
+        if(search.checked)
+        {
+            document.getElementById("sentToTwitchCenterScreen").innerHTML = "Error! "+error
+        }
+        else if (nonSearch.checked)
+        {
+            document.getElementById("sentToTwitch").innerHTML = "Error! "+error
+        }
+        else if(recent.checked)
+        {
+            document.getElementById("sentToTwitchCenterScreenRecentView").innerHTML = "Error! "+error
+        }
+    })
+}
+
+function DisplayTwitchImage()
+{
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    const guid = urlParams.get('guid')
+    var img = document.getElementById("cardImage")
+
+    var requestOptions = {
+        method: 'GET',
+        redirect: 'follow'
       };
       
-      $.ajax(settings).done(function (response) {
-        twitchUser = response.data[0];
-		document.getElementById('connectedToTwitch').style.display = "block";
-        document.getElementById('twitchPfp').src = twitchUser.profile_image_url
-        document.getElementById('twitchUsername').innerText = "Welcome " + twitchUser.display_name
-      });
+      fetch(apiUrl+"/deckutils/streamer/getImage/"+guid, requestOptions)
+      .then(response => {
+        return response.json();
+        }).then(data => {
+            img.src = data.cardImage
+            
+        }).catch(err => {
+            console.log(err)
+        });
 }
+
+//#endregion
