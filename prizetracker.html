@@ -27,24 +27,23 @@
      </ul>
 </div>
 <br />
-<div id="twitchConnection" style="float: right;">
-    <div id="connectToTwitch">
-    <button onclick="LogIntoTwitch()" class="loginToTwitch">Login to Twitch</button>
-    </div>
-    <div id="connectedToTwitch" style="display: none;">
-        <span id="twitchUsername"></span>
-        <img id="twitchPfp" style="width: 50px; height: 50px;"/>
-    </div>
-</div>
-<div id="mainBody" class="mainBody" style="display: flex;position: relative;/*! transform: translateX(-20%); */">
-    
+<div id="mainBody" class="mainBody" style="display: flex;position: relative;/*! transform: translateX(-20%); */">    
     <div style="display: flex;min-width: 20%;max-width: 20%;">
+        <div style="position: relative;width: 45%;padding-right: 5px;">
+        Recent Decks
+        <ul id="decklistList" class="decklistList">
+        </ul>
+        </div>
         <div style="position: relative;width: 100%;">
+            <label for="decklistName">Decklist Name</label><br>
+            <input type="text" id="decklistName" style="width: 90%";/><br><br>
             <label for="decklist">Please post your decklist here:</label><br><br>
-            <textarea id="decklist" style="height: 397px; width: 279px;"></textarea><br>
-            <a id="submitDecklist" onclick="SubmitDecklist()" class="standardButton">Submit Decklist</a>
+            <textarea id="decklist" style="height: 397px; width: 90%;"></textarea><br>
+            <a id="submitDecklist" onclick="SubmitDecklist()" class="standardButton" style="width: 80%;">Submit Decklist</a>
             </br>
             <input type="checkbox" id="fromPTCGO" checked>Exported from PTCGO</checkbox>
+            </br>
+            <a id="deleteDecklist" onclick="DeleteDeckFromLocalStorage()" class="standardButton" style="width: 80%;">Remove from Recents</a>
         </div>
         <div onclick="hideListInputMenu()" style="width: 10px;background: aliceblue;position: relative;filter: drop-shadow(3px 5px 2px #818181);">
             <div id="showHideListInputLabel" style="width: 30px;position: absolute;height: 70px;background: aliceblue;border-top-right-radius: 10px;border-bottom-right-radius: 10px;padding-top: auto;writing-mode: vertical-rl;padding-top: 10px;padding-right: 5px;cursor: pointer;">
@@ -71,6 +70,15 @@
     </div>
     <div id="prizeSelector">
         <div id="prizeselectortable"></div>
+    </div>
+    <div id="twitchConnection" style="display: flex; position: relative;">
+        <div id="connectToTwitch">
+        <button onclick="LogIntoTwitch()" class="loginToTwitch">Login to Twitch</button>
+        </div>
+        <div id="connectedToTwitch" style="display: none;">
+            <span id="twitchUsername"></span>
+            <img id="twitchPfp" style="width: 50px; height: 50px; display:none"/>
+        </div>
     </div>
 </div>
 <div class="footer">

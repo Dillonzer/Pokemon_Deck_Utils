@@ -396,10 +396,24 @@
   border-radius: 20px;
   background-color: #6541a5;
   color: white;
-  width: 330px;
+  width: 100%;
   height: 50px;
   padding-top: 3px;
   padding-right: 5px;
   padding-left: 5px;
 
+}
+.decklistList {
+  padding-left: 1em;
+  word-wrap: break-word;
+}
+.decklistList li:before {
+  content: '';
+  width: 20px;
+  height: 20px;
+  position: absolute;
+  background-image: url('images/deckbox.png');
+  background-size: cover;
+  background-position: center;
+  transform: translateX(-100%);
 }

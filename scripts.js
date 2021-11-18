@@ -31,6 +31,12 @@ function Set(name, code, ptcgo_code, releaseDate)
     this.ReleaseDate = releaseDate;
 }
 
+function PrizeDecklists(name, decklist)
+{
+    this.Name = name;
+    this.Decklist = decklist
+}
+
 let prizeCards = [];
 let prizeTable;
 let setViewTable;
@@ -42,6 +48,7 @@ let deckWizardCopy = ""
 let deckWizardMetaGameUrl = ""
 var allCards = []
 var recentCards = []
+var prizedeckLists = []
 
 var token;
 var twitchUser;
@@ -57,6 +64,20 @@ function init(){
 	} else { // Else we haven't been authorized yet
 		document.getElementById('connectToTwitch').style.display = "block";
 	}
+
+    let recentCardsCheck = JSON.parse(localStorage.getItem("recentCards"))    
+    let prizedeckListsCheck = JSON.parse(localStorage.getItem("prizecardDecks"))
+
+    if(recentCardsCheck != null)
+    {
+        recentCards = recentCardsCheck
+    }
+
+    if(prizedeckListsCheck != null)
+    {
+        prizedeckLists = prizedeckListsCheck
+        LoadDecklistsForPrizeTracker()
+    }
 }
 
 //#region PrizeTracker
@@ -65,7 +86,13 @@ function SubmitDecklist() {
     resetPrizeSelectorTable();
     ResetPrizeCards()
     let decklistText = document.getElementById('decklist').value;
-    CreateDecklistObject(decklistText)    
+    let decklistTitle = document.getElementById('decklistName').value;
+    if(decklistText != "" && decklistText != null && decklistTitle != "" && decklistTitle != null)
+    {                
+        upsertPrizeDecks(new PrizeDecklists(decklistTitle, decklistText))
+    }
+    CreateDecklistObject(decklistText) 
+    LoadDecklistsForPrizeTracker()   
 }
 
 function ReplaceEnergySymbols(decklist)
@@ -383,6 +410,66 @@ function GetUserInformation()
         document.getElementById('twitchPfp').src = twitchUser.profile_image_url
         document.getElementById('twitchUsername').innerText = "Welcome " + twitchUser.display_name
       });
+}
+
+function upsertPrizeDecks(prizecardDeck) {
+    let foundDeck = false
+
+    if(prizedeckLists == null)
+    {
+        prizedeckLists.push(prizecardDeck)
+        console.log(prizedeckLists)
+        localStorage.setItem('prizecardDecks', JSON.stringify(prizedeckLists))
+        return
+    }
+
+    for(let i = 0; i < prizedeckLists.length; i++)
+    {
+        if(prizedeckLists[i].Name == prizecardDeck.Name)
+        {
+            prizedeckLists[i].Decklist = prizecardDeck.Decklist
+            foundDeck = true
+            return
+        }
+    }
+
+    if(!foundDeck)
+    {
+        prizedeckLists.push(prizecardDeck)
+        localStorage.setItem('prizecardDecks', JSON.stringify(prizedeckLists))
+    }
+    
+}
+
+function LoadDecklistsForPrizeTracker()
+{
+    let decklistList = document.getElementById("decklistList")
+    decklistList.innerHTML = ""
+
+    for(let i = 0; i < prizedeckLists.length; i++)
+    {
+        let decklistAnchor = document.createElement('li');
+        decklistAnchor.innerHTML = prizedeckLists[i].Name
+        decklistAnchor.className = "prizeTrackerDecklists"
+        decklistAnchor.onclick = function () {LoadDeckForPrizeTracker(prizedeckLists[i])}
+        decklistList.appendChild(decklistAnchor);
+    }
+}
+
+function LoadDeckForPrizeTracker(decklist)
+{    
+    document.getElementById('decklistName').value = decklist.Name;
+    document.getElementById('decklist').value = decklist.Decklist;
+    SubmitDecklist()
+}
+
+function DeleteDeckFromLocalStorage()
+{
+    var newArray = prizedeckLists.filter((item) => item.Name !== document.getElementById('decklistName').value);
+    prizedeckLists = newArray
+    localStorage.setItem('prizecardDecks', JSON.stringify(prizedeckLists))
+    LoadDecklistsForPrizeTracker()
+
 }
 
 //#endregion
