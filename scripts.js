@@ -862,6 +862,13 @@ function hideCenterCardStreamerBoxForRecentCards()
     recentViewTable.className = "flexCardTable";
 }
 
+function ClearRecentCards()
+{    
+    recentCards = []
+    localStorage.removeItem('recentCards')
+    LoadRecentCardsForPrizeViewer()
+}
+
 //#endregion
 
 function CopyGuidToOtherGuidFields1()
