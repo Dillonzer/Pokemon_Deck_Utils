@@ -145,9 +145,7 @@ function CreateDecklistObject(decklistText)
     redirect: 'follow'
     };
 
-    var checked = !document.getElementById('fromPTCGO').checked
-
-    fetch(apiUrl+"/deckutils/generateDecklist?unordered="+checked, requestOptions)
+    fetch(apiUrl+"/deckutils/generateDecklist", requestOptions)
     .then(response => {
         return response.json()
         })
