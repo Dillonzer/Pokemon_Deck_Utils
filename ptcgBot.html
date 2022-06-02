@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<title>Pokemon Deck Utils | PTCGBot</title>
+<link rel="shortcut icon" type="image/jpg" href="./images/Logo.png"/>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="style.css">
+<script src="scripts.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<body onload="initPtcgbot()">
+<div class="topbanner">
+    <h1>PTCGBot</h1>
+</div>
+<div class="navbar">
+    <ul>
+        <li><a href="./index.html">Home</a></li>
+        <li><a href="./howtouse.html">How to Use</a></li>
+        <li><a href="./prizetracker.html">Prize Tracker</a></li>
+        <li><a href="./setviewer.html">Set Viewer</a></li>
+        <li><a href="./deckwizard.html">Deck Wizard</a></li>
+        <li><a href="./streamerCardView.html">Stream Card Viewer</a></li>
+     </ul>
+</div>
+<br />
+<div id="mainBody" class="mainBody" style="display: flex;position: relative;/*! transform: translateX(-20%); */">    
+    <div id="twitchConnection">
+        <div id="connectToTwitch">
+        <button onclick="LogIntoTwitchPTCGBot()" class="loginToTwitch">Login to Twitch</button>
+        </div>
+        <div id="connectedToTwitch" style="display: none;">
+            <span id="twitchUsername"></span>
+            <img id="twitchPfp" style="width: 50px; height: 50px;"/>
+        </div>
+        <br />
+        <div id="ptcgBotButtons" style="display: none;">                
+            <a id="addBotToChannel" onclick="AddPtcgoBotToChannel()" class="standardButton">Add PTCGBot to your Channel!</a>
+            <br />
+            <a id="removeBotFromChannel" onclick="RemovePtcgoBotFromChannel()" class="standardButton">Remove PTCGBot from your Channel!</a>
+            <br />
+            <a id="addFfzPtcgbot" onclick="AddPtcgoBotFFZToChannel()" class="standardButton">Enable FFZ Mode for PTCGBot</a> 
+            <br />
+            <a href="https://www.frankerfacez.com/dillonzer/submissions" class="standardButton">Emotes to Add for FFZ Mode</a>
+            <br />
+            <a id="removeFfzPtcgbot" onclick="RemovePtcgoBotFFZToChannel()" class="standardButton">Disable FFZ Mode for PTCGBot</a>
+        </div>
+    </div>
+</div>
+<div class="footer">
+    <div style="float: right;">        
+        <a href="https://www.patreon.com/bePatron?u=34112337" title="Become a Patreon"><img class="socialMediaIcons" src="./images/patreon-creators-patreon.png" style="width:40px; height:40px; padding-bottom: 7px;"/></a>  
+        <a href="https://discord.gg/SqpJZn2" title="Join us on Discord"><img class="socialMediaIcons" src="./images/Discord-Logo-Color.png"/></a>           
+        <a href="https://twitter.com/dillonzer" title="Follow me on Twitter"><img class="socialMediaIcons" src="./images/twitter.png" style="padding-right: 5px; padding-bottom: 2px;"/></a>
+        <a href="https://trello.com/b/jmPHcU5o/dillonzers-pokemon-apps" title="Follow my Trello Board"><img class="socialMediaIcons" src="./images/trello-512.png" style="width:40px; height:40px; padding-bottom: 7px;"/>
+    </div>
+</div>
+</body>
+</html> 
