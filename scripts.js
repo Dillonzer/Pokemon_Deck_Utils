@@ -80,6 +80,18 @@ function init(){
     }
 }
 
+function initPtcgbot()
+{
+    // Try to get the token from the URL
+	token = getToken();
+	// If the token has been given so change the display
+	if (token) {
+		document.getElementById('connectToTwitch').style.display = "none";
+        GetUserInformationPtcgBot()
+	} else { // Else we haven't been authorized yet
+		document.getElementById('connectToTwitch').style.display = "block";
+	}
+}
 //#region PrizeTracker
 
 function SubmitDecklist() {   
@@ -126,6 +138,7 @@ function CreateDecklistObject(decklistText)
     myHeaders.append("Content-Type", "application/json");
 
     let raw = JSON.stringify({"decklist": decklistText.trim()});
+    console.log(raw)
 
     if(token)
     {
@@ -407,6 +420,7 @@ function GetUserInformation()
 		document.getElementById('connectedToTwitch').style.display = "block";
         document.getElementById('twitchPfp').src = twitchUser.profile_image_url
         document.getElementById('twitchUsername').innerText = "Welcome " + twitchUser.display_name
+        
       });
 }
 
@@ -1049,4 +1063,148 @@ function DisplayTwitchImage()
         });
 }
 
+//#endregion
+
+//#region PTCGBot
+function LogIntoTwitchPTCGBot()
+{
+    window.open("https://id.twitch.tv/oauth2/authorize?response_type=token&client_id=y0h43wl0lu80blrjygro7rp3dn0ttz&redirect_uri=https://dillonzer.github.io/Pokemon_Deck_Utils/ptcgBot.html&scope=user:read:email")
+}
+
+function GetUserInformationPtcgBot()
+{
+    var settings = {
+        "url": "https://api.twitch.tv/helix/users",
+        "method": "GET",
+        "timeout": 0,
+        "headers": {
+          "Client-Id": "y0h43wl0lu80blrjygro7rp3dn0ttz",
+          "Authorization": "Bearer "+token
+        },
+      };
+      
+      $.ajax(settings).done(function (response) {
+        twitchUser = response.data[0];
+		document.getElementById('connectedToTwitch').style.display = "block";
+        document.getElementById('twitchPfp').src = twitchUser.profile_image_url
+        document.getElementById('twitchUsername').innerText = "Welcome " + twitchUser.display_name
+		document.getElementById('ptcgBotButtons').style.display = "block";
+      });
+}
+
+function AddPtcgoBotToChannel()
+{
+    let myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+    var raw = "\{ \"userlist\": \"#"+twitchUser.display_name.toLowerCase()+"\"\}"
+
+    let sendToApiRequest = {
+        method: 'POST',
+        headers: myHeaders,
+        body: raw,
+        redirect: 'follow'
+        }; 
+    
+    fetch(apiUrl+"/deckutils/ptcgBot/updateUserList/true", sendToApiRequest).then(response => {
+        return response.json();
+        }).then(data => {          
+            if(data)
+            {
+                alert("You have added PTCGBot to your Twitch channel! It will take a few moments for it to appear. Please remember to give it Moderator status.")
+            }
+            else
+            {
+                alert("There was an issue adding PTCGBot to your Twitch channel. Please contact Dillonzer on Twitter or Discord.")
+            }
+        }).catch(err => {
+            console.log(err)
+        });
+}
+
+function RemovePtcgoBotFromChannel()
+{
+    let myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+    var raw = "\{ \"userlist\": \"#"+twitchUser.display_name.toLowerCase()+"\"\}"
+
+    let sendToApiRequest = {
+        method: 'POST',
+        headers: myHeaders,
+        body: raw,
+        redirect: 'follow'
+        }; 
+    
+    fetch(apiUrl+"/deckutils/ptcgBot/updateUserList/false", sendToApiRequest).then(response => {
+        return response.json();
+        }).then(data => {       
+            if(data)
+            {
+                alert("You have remove PTCGBot to your Twitch channel! It will take a few moments for it to leave. Please remember to remove it's Moderator status.")
+            }
+            else
+            {
+                alert("There was an issue removing PTCGBot from your Twitch channel. Please contact Dillonzer on Twitter or Discord.")
+            }
+        }).catch(err => {
+            console.log(err)
+        });
+}
+
+function AddPtcgoBotFFZToChannel()
+{
+    let myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+    var raw = "\{ \"userlist\": \"#"+twitchUser.display_name.toLowerCase()+"\"\}"
+
+    let sendToApiRequest = {
+        method: 'POST',
+        headers: myHeaders,
+        body: raw,
+        redirect: 'follow'
+        }; 
+    
+    fetch(apiUrl+"/deckutils/ptcgBot/ffz/updateUserList/true", sendToApiRequest).then(response => {
+        return response.json();
+        }).then(data => {         
+            if(data)
+            {
+                alert("You have enabled FFZ mode for PTCGBot on your Twitch channel! It will take a few moments for it to appear. Please remember to add all the FFZ Emotes")
+            }
+            else
+            {
+                alert("There was an issue enabling FFZ mode for PTCGBot in your Twitch channel. Please contact Dillonzer on Twitter or Discord.")
+            }
+        }).catch(err => {
+            console.log(err)
+        });
+}
+
+function RemovePtcgoBotFFZToChannel()
+{
+    let myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+    var raw = "\{ \"userlist\": \"#"+twitchUser.display_name.toLowerCase()+"\"\}"
+
+    let sendToApiRequest = {
+        method: 'POST',
+        headers: myHeaders,
+        body: raw,
+        redirect: 'follow'
+        }; 
+    
+    fetch(apiUrl+"/deckutils/ptcgBot/ffz/updateUserList/false", sendToApiRequest).then(response => {
+        return response.json();
+        }).then(data => {       
+            if(data)
+            {
+                alert("You have disabled FFZ mode for PTCGBot on your Twitch channel! It will take a few moments for it to disable.")
+            }
+            else
+            {
+                alert("There was an issue disabling FFZ mode for PTCGBot in your Twitch channel. Please contact Dillonzer on Twitter or Discord.")
+            }
+        }).catch(err => {
+            console.log(err)
+        });
+}
 //#endregion
