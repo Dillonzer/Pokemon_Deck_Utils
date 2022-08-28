@@ -43,6 +43,7 @@ let setViewTable;
 let prizedCards=[];
 let blankImageLocation="./images/default-card-image.png";
 let apiUrl = "https://pkmntcgapi-production.up.railway.app"
+let apiUrl2 = "https://ptcg-api.herokuapp.com"
 let allSets = [];
 let deckWizardCopy = ""
 let deckWizardMetaGameUrl = ""
@@ -149,6 +150,7 @@ function CreateDecklistObject(decklistText)
             redirect: 'follow'
             }; 
         fetch(apiUrl+"/deckutils/twitchIntegration/upsert/decklist/"+twitchUser.id, sendToTwitchRequst)
+        fetch(apiUrl2+"/deckutils/twitchIntegration/upsert/decklist/"+twitchUser.id, sendToTwitchRequst)
     }
 
     let requestOptions = {
@@ -237,6 +239,7 @@ function SetPrizeCards(card, cardAmountSpan)
             }; 
         
         fetch(apiUrl+"/deckutils/twitchIntegration/upsert/prizes/"+twitchUser.id, sendToTwitchRequst)
+        fetch(apiUrl2+"/deckutils/twitchIntegration/upsert/prizes/"+twitchUser.id, sendToTwitchRequst)
     }
 }
 
@@ -266,6 +269,7 @@ function TakePrizeCard(prizeCard, position)
             }; 
         
         fetch(apiUrl+"/deckutils/twitchIntegration/upsert/prizes/"+twitchUser.id, sendToTwitchRequst)
+        fetch(apiUrl2+"/deckutils/twitchIntegration/upsert/prizes/"+twitchUser.id, sendToTwitchRequst)
     }
 }
 
@@ -292,6 +296,7 @@ function ResetPrizeCards()
             }; 
         
         fetch(apiUrl+"/deckutils/twitchIntegration/upsert/prizes/"+twitchUser.id, sendToTwitchRequst)
+        fetch(apiUrl2+"/deckutils/twitchIntegration/upsert/prizes/"+twitchUser.id, sendToTwitchRequst)
     }
     
 }
@@ -329,6 +334,7 @@ function returnPrizeCards(){
             }; 
         
         fetch(apiUrl+"/deckutils/twitchIntegration/upsert/prizes/"+twitchUser.id, sendToTwitchRequst)
+        fetch(apiUrl2+"/deckutils/twitchIntegration/upsert/prizes/"+twitchUser.id, sendToTwitchRequst)
     }
 }
 
