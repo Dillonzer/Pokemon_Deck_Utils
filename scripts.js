@@ -492,7 +492,7 @@ function DeleteDeckFromLocalStorage()
 function GetAllSets()
 {
     setViewTable = document.getElementById('setviewtable');
-    var apiCall = apiUrl+"/api/sets";
+    var apiCall = "https://raw.githubusercontent.com/Dillonzer/dillonzer.github.io/master/data/sets.json";
             fetch(apiCall).then(response => {
             return response.json();
             }).then(data => {
@@ -518,12 +518,16 @@ async function createAllSetTable(setName)
 { 
     setViewTable.innerHTML="";
     let cardsInSet = []
-    var apiCall = apiUrl+"/api/cards/setName="+setName.value;
+    var apiCall = "https://raw.githubusercontent.com/Dillonzer/dillonzer.github.io/master/data/cards.json";
     fetch(apiCall).then(response => {
     return response.json();
     }).then(data => {
+        console.log(setName.value)
         for(index in data) {
-            cardsInSet.push(new Card(data[index].name, data[index].setName, data[index].number, data[index].imageUrlHiRes));
+            if(data[index].set.name == setName.value)
+            {
+                cardsInSet.push(new Card(data[index].name, data[index].set.name, data[index].number, data[index].imageUrlHiRes));
+            }
         }
 
         for(let i = 0; i < cardsInSet.length; i++)
@@ -561,7 +565,7 @@ function hideCenterCard()
 
 //#endregion
 
-//#region DeckWizard
+/*#region DeckWizard
 
 function GetAllDeckWizardCards()
 {
@@ -679,6 +683,7 @@ function CopyDeckWizardToClipboard()
 }
 
 //#endregion
+*/
 
 //#region StreamCardViewer
 
@@ -693,7 +698,7 @@ function streamerCardViewOnload()
 
 function GetAllCards()
 {
-    var apiCall = apiUrl+"/api/cards";
+    var apiCall = "https://raw.githubusercontent.com/Dillonzer/dillonzer.github.io/master/data/cards.json";
             fetch(apiCall).then(response => {
             return response.json();
             }).then(data => {
@@ -718,7 +723,7 @@ function FinishLoadingStreamerCardStuff()
 
 function GetAllSetsButSetCode()
 {
-    var apiCall = apiUrl+"/api/sets";
+    var apiCall = "https://raw.githubusercontent.com/Dillonzer/dillonzer.github.io/master/data/sets.json";
             fetch(apiCall).then(response => {
             return response.json();
             }).then(data => {
