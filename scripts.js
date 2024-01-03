@@ -1290,12 +1290,9 @@ function SubmitDecklistForDooD() {
             {      
                 let decklistText = document.getElementById('decklist').value;
                 CreateDecklistObjectForDooD(twitchUser.display_name, decklistText)   
-            }   
-            else
-            {
-                window.alert("You are not subbed to AzulGG on Twitch. Please sub for access to DooD.")
-            }
-        });
+            }  
+        })
+        .catch(error => window.alert("You are not subbed to AzulGG on Twitch. Please sub for access to DooD."));
       });
     
 }
@@ -1389,7 +1386,7 @@ function GetUserInformationDooDAdmin()
       
       $.ajax(settings).done(function (response) {
         twitchUser = response.data[0];
-        if(twitchUser.id == "24935580")
+        if(twitchUser.id == "24935580")//56083652
         {
             document.getElementById('connectedToTwitch').style.display = "block";
             document.getElementById('twitchPfp').src = twitchUser.profile_image_url
@@ -1405,7 +1402,6 @@ function GetUserInformationDooDAdmin()
       });
 }
 
-//TODO: Retrieve from API
 function GetAllDooDDecks()
 {
     var apiCall = apiUrl+"/deckutils/dood/getAllDecks";
@@ -1427,7 +1423,6 @@ function GetAllDooDDecks()
     });
 }
 
-//TODO: Display Dood
 function LoadDooDDeckIntoPrizeTracker()
 {
     var decklist = document.getElementById('select_doodDecks').value
@@ -1480,7 +1475,6 @@ function CreateDecklistObjectAdminDood(decklistText)
     .catch(error => window.alert("Woops, something went wrong. Contact Dillonzer with your list."));
 }
  
-//TODO: Purge All DooDs
 function PurgeDooDDecks()
 {
     var deleteAll = window.confirm("ARE YOU SURE?")
@@ -1488,6 +1482,26 @@ function PurgeDooDDecks()
     {
         var settings = {
             "url": apiUrl+"/deckutils/dood/deleteAllDoodDecks",
+            "method": "DELETE",
+            "timeout": 0
+        };
+        
+        $.ajax(settings).done(function (response) {
+            location.reload()
+        });
+    }
+}
+
+function DeleteSpecificDooDDeck()
+{
+    var deleteAll = window.confirm("ARE YOU SURE?")
+    if(deleteAll)
+    {
+        var sel = document.getElementById('select_doodDecks')
+        var twitchName = sel.options[sel.selectedIndex].text;
+        console.log(twitchName)
+        var settings = {
+            "url": apiUrl+"/deckutils/dood/deleteSpecificDoodDeck/"+twitchName,
             "method": "DELETE",
             "timeout": 0
         };
