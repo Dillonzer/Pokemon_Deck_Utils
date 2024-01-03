@@ -37,6 +37,12 @@ function PrizeDecklists(name, decklist)
     this.Decklist = decklist
 }
 
+function DooDDeck(twitchUser, decklist)
+{
+    this.TwitchUser = twitchUser;
+    this.Decklist = decklist
+}
+
 let prizeCards = [];
 let prizeTable;
 let setViewTable;
@@ -49,6 +55,7 @@ let deckWizardMetaGameUrl = ""
 var allCards = []
 var recentCards = []
 var prizedeckLists = []
+let doodDecks = []
 
 var token;
 var twitchUser;
@@ -170,11 +177,12 @@ function CreateDecklistObject(decklistText)
 
         CreatePrizeSelectorTable(decklist)
     })
-    .catch(error => console.log('error', error));
+    .catch(error => window.alert("Woops, something went wrong. Contact Dillonzer with your list."));
 }
 
 async function CreatePrizeSelectorTable(decklist)
 {
+    prizeTable.innerHTML = ""
     if(typeof decklist == 'undefined')
     {
         //show error message
@@ -1212,5 +1220,281 @@ function RemovePtcgoBotFFZToChannel()
         }).catch(err => {
             console.log(err)
         });
+}
+//#endregion
+
+//#region DooD Submission
+function initDooDSubmission(){
+	// Try to get the token from the URL
+	token = getToken();
+	// If the token has been given so change the display
+	if (token) {
+		document.getElementById('connectToTwitch').style.display = "none";
+        GetUserInformationDooD()
+	} else { // Else we haven't been authorized yet
+		document.getElementById('connectToTwitch').style.display = "block";
+	}
+}
+
+function LogIntoTwitchForDood()
+{
+    window.open("https://id.twitch.tv/oauth2/authorize?response_type=token&client_id=ygoejvo56l7d6jrhsmvlix7ejv00nc&redirect_uri=https://dillonzer.github.io/Pokemon_Deck_Utils/dood/submission.html&scope=user:read:email user:read:subscriptions")
+}
+
+function GetUserInformationDooD()
+{
+    var settings = {
+        "url": "https://api.twitch.tv/helix/users",
+        "method": "GET",
+        "timeout": 0,
+        "headers": {
+          "Client-Id": "ygoejvo56l7d6jrhsmvlix7ejv00nc",
+          "Authorization": "Bearer "+token
+        },
+      };
+      
+      $.ajax(settings).done(function (response) {
+        twitchUser = response.data[0];
+		document.getElementById('connectedToTwitch').style.display = "block";
+        document.getElementById('twitchPfp').src = twitchUser.profile_image_url
+        document.getElementById('twitchUsername').innerText = "Welcome " + twitchUser.display_name
+        document.getElementById('deckSubmission').style.display = ""
+      });
+}
+
+function SubmitDecklistForDooD() {   
+    var settings = {
+        "url": "https://api.twitch.tv/helix/users",
+        "method": "GET",
+        "timeout": 0,
+        "headers": {
+          "Client-Id": "ygoejvo56l7d6jrhsmvlix7ejv00nc",
+          "Authorization": "Bearer "+token
+        },
+      };
+      
+      $.ajax(settings).done(function (response) {
+        twitchUser = response.data[0];
+        var subCheck = {
+            "url": " https://api.twitch.tv/helix/subscriptions/user?broadcaster_id=24935580&user_id="+twitchUser.id,
+            "method": "GET",
+            "timeout": 0,
+            "headers": {
+            "Client-Id": "ygoejvo56l7d6jrhsmvlix7ejv00nc",
+            "Authorization": "Bearer "+token
+            },
+        };
+        
+        $.ajax(subCheck).done(function (response, textStatus, xhr) {
+            if(xhr.status == 200)
+            {      
+                let decklistText = document.getElementById('decklist').value;
+                CreateDecklistObjectForDooD(twitchUser.display_name, decklistText)   
+            }   
+            else
+            {
+                window.alert("You are not subbed to AzulGG on Twitch. Please sub for access to DooD.")
+            }
+        });
+      });
+    
+}
+
+function CreateDecklistObjectForDooD(userName, decklistText)
+{
+    let decklist = new Decklist()
+
+    decklistText = ReplaceEnergySymbols(decklistText)
+
+    let myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+
+    let raw = JSON.stringify({"decklist": decklistText.trim()});
+   
+
+    let requestOptions = {
+    method: 'POST',
+    headers: myHeaders,
+    body: raw,
+    redirect: 'follow'
+    };
+
+    fetch(apiUrl+"/deckutils/generateDecklist", requestOptions)
+    .then(response => {
+        return response.json()
+        })
+    .then(data => {
+        for(let i = 0; i < data["cards"].length; i++)
+        {
+            decklist.addCards(new Card(data["cards"][i].name, data["cards"][i].set["name"], data["cards"][i].number, data["cards"][i].imageUrlHiRes, data["cards"][i].deckCount))
+        }    
+        
+        SubmitDooDToAPI(userName, decklistText.trim())
+    })
+    .catch(error => window.alert(`Woops, something went wrong. Contact Dillonzer with your list: ${error}`));
+}
+
+function SubmitDooDToAPI(userName, decklist)
+{
+    let body = JSON.stringify({"TwitchUser": userName, "Decklist": decklist})
+    let myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+    let requestOptions = {
+    method: 'POST',
+    headers: myHeaders,
+    body: body,
+    redirect: 'follow'
+    };
+
+    fetch(apiUrl+"/deckutils/dood/upsertDeck", requestOptions)
+    .then(response => {
+        return response.json()
+        })
+        .then(data => window.alert("Submitted!"))
+    .catch(error => window.alert(`Woops, something went wrong. Contact Dillonzer with your list: ${error}`));
+}
+//#endregion
+
+//#region DooD Admin
+
+function initDooDAdmin(){
+    prizeTable = document.getElementById('prizeselectortable');
+	// Try to get the token from the URL
+	token = getToken();
+	// If the token has been given so change the display
+	if (token) {
+		document.getElementById('connectToTwitch').style.display = "none";
+        GetUserInformationDooDAdmin()
+	} else { // Else we haven't been authorized yet
+		document.getElementById('connectToTwitch').style.display = "block";
+	}
+}
+
+function LogIntoTwitchForDoodAdmin()
+{
+    window.open("https://id.twitch.tv/oauth2/authorize?response_type=token&client_id=ygoejvo56l7d6jrhsmvlix7ejv00nc&redirect_uri=https://dillonzer.github.io/Pokemon_Deck_Utils/dood/admin.html&scope=user:read:email user:read:subscriptions")
+}
+
+function GetUserInformationDooDAdmin()
+{
+    var settings = {
+        "url": "https://api.twitch.tv/helix/users",
+        "method": "GET",
+        "timeout": 0,
+        "headers": {
+          "Client-Id": "ygoejvo56l7d6jrhsmvlix7ejv00nc",
+          "Authorization": "Bearer "+token
+        },
+      };
+      
+      $.ajax(settings).done(function (response) {
+        twitchUser = response.data[0];
+        if(twitchUser.id == "24935580")
+        {
+            document.getElementById('connectedToTwitch').style.display = "block";
+            document.getElementById('twitchPfp').src = twitchUser.profile_image_url
+            document.getElementById('twitchUsername').innerText = "Welcome " + twitchUser.display_name
+            document.getElementById('mainBody').style.display = "flex"
+            GetAllDooDDecks()
+        }
+        else
+        {
+            window.alert("This page is only for AzulGG.")
+            document.getElementById('mainBody').innerHTML = ""
+        }
+      });
+}
+
+//TODO: Retrieve from API
+function GetAllDooDDecks()
+{
+    var apiCall = apiUrl+"/deckutils/dood/getAllDecks";
+    fetch(apiCall).then(response => {
+    return response.json();
+    }).then(data => {
+        for(index in data) {
+            doodDecks.push(new DooDDeck(data[index].twitchUser, data[index].decklist));
+        }  
+
+        var decks = document.getElementById('select_doodDecks')
+        for(var i = 0; i < doodDecks.length; i++)
+        {
+            decks.options[decks.options.length] = new Option(doodDecks[i].TwitchUser, doodDecks[i].Decklist);
+        }
+        
+    }).catch(err => {
+        console.log(err)
+    });
+}
+
+//TODO: Display Dood
+function LoadDooDDeckIntoPrizeTracker()
+{
+    var decklist = document.getElementById('select_doodDecks').value
+    navigator.clipboard.writeText(decklist);
+    CreateDecklistObjectAdminDood(decklist)
+}
+
+function CreateDecklistObjectAdminDood(decklistText)
+{
+    let decklist = new Decklist()
+
+    decklistText = ReplaceEnergySymbols(decklistText)
+
+    let myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+
+    let raw = JSON.stringify({"decklist": decklistText.trim()});
+    console.log(raw)
+
+    if(token)
+    {
+        let sendToTwitchRequst = {
+            method: 'POST',
+            headers: myHeaders,
+            body: raw,
+            redirect: 'follow'
+            }; 
+        fetch(apiUrl+"/deckutils/twitchIntegration/upsert/decklist/dood/24935580"/*+twitchUser.id*/, sendToTwitchRequst)
+    }
+
+    let requestOptions = {
+    method: 'POST',
+    headers: myHeaders,
+    body: raw,
+    redirect: 'follow'
+    };
+
+    fetch(apiUrl+"/deckutils/generateDecklist", requestOptions)
+    .then(response => {
+        return response.json()
+        })
+    .then(data => {
+        for(let i = 0; i < data["cards"].length; i++)
+        {
+            decklist.addCards(new Card(data["cards"][i].name, data["cards"][i].set["name"], data["cards"][i].number, data["cards"][i].imageUrlHiRes, data["cards"][i].deckCount))
+        }    
+
+        CreatePrizeSelectorTable(decklist)
+    })
+    .catch(error => window.alert("Woops, something went wrong. Contact Dillonzer with your list."));
+}
+ 
+//TODO: Purge All DooDs
+function PurgeDooDDecks()
+{
+    var deleteAll = window.confirm("ARE YOU SURE?")
+    if(deleteAll)
+    {
+        var settings = {
+            "url": apiUrl+"/deckutils/dood/deleteAllDoodDecks",
+            "method": "DELETE",
+            "timeout": 0
+        };
+        
+        $.ajax(settings).done(function (response) {
+            location.reload()
+        });
+    }
 }
 //#endregion

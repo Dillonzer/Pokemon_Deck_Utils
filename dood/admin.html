@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<title>Pokemon Deck Utils | DooD Admin</title>
+<link rel="shortcut icon" type="image/jpg" href="../../images/Logo.png"/>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="../style.css">
+<script src="../scripts.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+    $(document).bind("contextmenu",function(e){
+    e.preventDefault();  
+});
+</script>
+
+<body onload="initDooDAdmin()">
+<div class="topbanner">
+    <h1>Azul's DooD Deck Picker</h1>
+</div>
+<br />
+<div id="twitchConnection" style="display: flex; position: relative;">
+    <div id="connectToTwitch">
+    <button onclick="LogIntoTwitchForDoodAdmin()" class="loginToTwitch">Login to Twitch</button>
+    </div>
+    <div id="connectedToTwitch" style="display: none;">
+        <span id="twitchUsername"></span>
+        <img id="twitchPfp" style="width: 50px; height: 50px;"/>
+    </div>
+</div>
+<div id="mainBody" class="mainBody" style="display: none;position: relative;/*! transform: translateX(-20%); */">    
+    <div style="display: flex;min-width: 15%;max-width: 15%;">
+        <div style="position: relative;width: 100%;">
+            <label for="select_doodDecks">Choose a DooD Deck:</label>
+            <select name="select_doodDecks" id="select_doodDecks"></select>
+            <button class="standardButton" id="loadDooDList" onclick="LoadDooDDeckIntoPrizeTracker()">Load List</button>
+            <button class="standardButton" id="deleteDooDLists" style="margin-top: 47vh;" onclick="PurgeDooDDecks()">DELETE ALL DOOD LISTS</button>
+        </div>
+    </div>
+    <div id="prizeCards" style="flex: 1; padding-left: 50px; padding-top: 39px;">        
+        <table id="prizeCards">
+            <tr>
+                <td><img id="prize1" src="../images/default-card-image.png" class="prizeCard" onclick="TakePrizeCard(this, 1)" oncontextmenu="ResetThisPrizeCard(1)"/></td>
+                <td><img id="prize2" src="../images/default-card-image.png" class="prizeCard" onclick="TakePrizeCard(this, 2)" oncontextmenu="ResetThisPrizeCard(2)"/></td>
+                <td><img id="prize3" src="../images/default-card-image.png" class="prizeCard" onclick="TakePrizeCard(this, 3)" oncontextmenu="ResetThisPrizeCard(3)"/></td>
+            </tr>
+            <tr>
+                <td><img id="prize4" src="../images/default-card-image.png" class="prizeCard" onclick="TakePrizeCard(this, 4)" oncontextmenu="ResetThisPrizeCard(4)"/></td>
+                <td><img id="prize5" src="../images/default-card-image.png" class="prizeCard" onclick="TakePrizeCard(this, 5)" oncontextmenu="ResetThisPrizeCard(5)"/></td>
+                <td><img id="prize6" src="../images/default-card-image.png" class="prizeCard" onclick="TakePrizeCard(this, 6)" oncontextmenu="ResetThisPrizeCard(6)"/></td>
+            </tr>
+        </table>
+        <div style="display: flex;">
+            <a class="standardButton" onclick="returnPrizeCards()">Return ALL Prizes</a>
+        </div>
+    </div>
+    <div id="prizeSelector">
+        <div id="prizeselectortable"></div>
+    </div>
+</div>
+<div class="footer">
+    <div style="float: right;">        
+        <a href="https://www.patreon.com/bePatron?u=34112337" title="Become a Patreon"><img class="socialMediaIcons" src="../images/patreon-creators-patreon.png" style="width:40px; height:40px; padding-bottom: 7px;"/></a>  
+        <a href="https://discord.gg/SqpJZn2" title="Join us on Discord"><img class="socialMediaIcons" src="../images/Discord-Logo-Color.png"/></a>           
+        <a href="https://twitter.com/dillonzer" title="Follow me on Twitter"><img class="socialMediaIcons" src="../images/twitter.png" style="padding-right: 5px; padding-bottom: 2px;"/></a>
+        <a href="https://trello.com/b/jmPHcU5o/dillonzers-pokemon-apps" title="Follow my Trello Board"><img class="socialMediaIcons" src="../images/trello-512.png" style="width:40px; height:40px; padding-bottom: 7px;"/>
+    </div>
+</div>
+</body>
+</html> 

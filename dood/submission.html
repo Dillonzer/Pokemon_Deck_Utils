@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<title>Pokemon Deck Utils | Prize Tracker</title>
+<link rel="shortcut icon" type="image/jpg" href="../images/Logo.png"/>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="../style.css">
+<script src="../scripts.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+    $(document).bind("contextmenu",function(e){
+    e.preventDefault();  
+});
+</script>
+
+<body onload="initDooDSubmission()">
+<div class="topbanner">
+    <h1>Azul's DooD Submission Page</h1>
+</div>
+<br />
+<div id="twitchConnection" style="display: flex; position: relative;">
+    <div id="connectToTwitch">
+    <button onclick="LogIntoTwitchForDood()" class="loginToTwitch">Login to Twitch</button>
+    </div>
+    <div id="connectedToTwitch" style="display: none;">
+        <span id="twitchUsername"></span>
+        <img id="twitchPfp" style="width: 50px; height: 50px;"/>
+    </div>
+</div>
+<div id="mainBody" class="mainBody" style="display: flex;position: relative;/*! transform: translateX(-20%); */">    
+    <div id="deckSubmission" style="min-width: 20%;max-width: 20%; display: none">
+        <div style="position: relative;width: 100%;">
+            <label for="decklist">Please post your decklist here:</label><br><br>
+            <textarea id="decklist" style="height: 397px; width: 90%;"></textarea><br>
+            <a id="submitDecklist" onclick="SubmitDecklistForDooD()" class="standardButton" style="width: 80%;">Submit Decklist</a>
+        </div>
+    </div>
+</div>
+<div class="footer">
+    <div style="float: right;">        
+        <a href="https://www.patreon.com/bePatron?u=34112337" title="Become a Patreon"><img class="socialMediaIcons" src="../images/patreon-creators-patreon.png" style="width:40px; height:40px; padding-bottom: 7px;"/></a>  
+        <a href="https://discord.gg/SqpJZn2" title="Join us on Discord"><img class="socialMediaIcons" src="../images/Discord-Logo-Color.png"/></a>           
+        <a href="https://twitter.com/dillonzer" title="Follow me on Twitter"><img class="socialMediaIcons" src="../images/twitter.png" style="padding-right: 5px; padding-bottom: 2px;"/></a>
+        <a href="https://trello.com/b/jmPHcU5o/dillonzers-pokemon-apps" title="Follow my Trello Board"><img class="socialMediaIcons" src="../images/trello-512.png" style="width:40px; height:40px; padding-bottom: 7px;"/>
+    </div>
+</div>
+</body>
+</html> 
