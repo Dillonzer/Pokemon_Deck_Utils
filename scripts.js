@@ -207,6 +207,32 @@ async function CreatePrizeSelectorTable(decklist)
     }
 }
 
+async function CreatePrizeSelectorTableView(decklist)
+{
+    prizeTable.innerHTML = ""
+    if(typeof decklist == 'undefined')
+    {
+        //show error message
+        alert("The decklist is invalid.")
+        return
+    }   
+
+    let fullList = decklist.Cards;
+    for(let i = 0; i < fullList.length; i++)
+    {
+        let card = fullList[i]
+        let cardDiv = document.createElement('div');
+        let cardImage = document.createElement('img');//CREATE CARD IMAGE
+        let cardAmountSpan = document.createElement('span');//CREATE CARD AMOUNT SPAN
+        cardImage.src = card.ImageLink
+        cardImage.className = "card"
+        cardAmountSpan.innerHTML = card.DeckCount
+        cardDiv.appendChild(cardImage);
+        cardDiv.appendChild(cardAmountSpan);
+        prizeTable.appendChild(cardDiv);
+    }
+}
+
 function SetPrizeCards(card, cardAmountSpan)
 {
 
@@ -1225,6 +1251,7 @@ function RemovePtcgoBotFFZToChannel()
 
 //#region DooD Submission
 function initDooDSubmission(){
+    prizeTable = document.getElementById('prizeselectortable');
 	// Try to get the token from the URL
 	token = getToken();
 	// If the token has been given so change the display
@@ -1259,7 +1286,30 @@ function GetUserInformationDooD()
         document.getElementById('twitchPfp').src = twitchUser.profile_image_url
         document.getElementById('twitchUsername').innerText = "Welcome " + twitchUser.display_name
         document.getElementById('deckSubmission').style.display = ""
+        FillInSubmittedDooDDeck(twitchUser.display_name)
       });
+}
+
+function FillInSubmittedDooDDeck(userName)
+{
+    var apiCall = apiUrl+"/deckutils/dood/getAllDecks";
+    fetch(apiCall).then(response => {
+    return response.json();
+    }).then(data => {
+        for(index in data) {
+            doodDecks.push(new DooDDeck(data[index].twitchUser, data[index].decklist));
+        }  
+
+        for(i in doodDecks)
+        {
+            if(doodDecks[i].TwitchUser == userName)
+            {                
+                document.getElementById('decklist').value = doodDecks[i].Decklist                
+                CreateDecklistObjectForDooD(twitchUser.display_name, doodDecks[i].Decklist, false)  
+                break;
+            }
+        }
+    })
 }
 
 function SubmitDecklistForDooD() {   
@@ -1289,7 +1339,7 @@ function SubmitDecklistForDooD() {
             if(xhr.status == 200)
             {      
                 let decklistText = document.getElementById('decklist').value;
-                CreateDecklistObjectForDooD(twitchUser.display_name, decklistText)   
+                CreateDecklistObjectForDooD(twitchUser.display_name, decklistText, true)   
             }  
         })
         .catch(error => window.alert("You are not subbed to AzulGG on Twitch. Please sub for access to DooD."));
@@ -1297,7 +1347,7 @@ function SubmitDecklistForDooD() {
     
 }
 
-function CreateDecklistObjectForDooD(userName, decklistText)
+function CreateDecklistObjectForDooD(userName, decklistText, submitToApi)
 {
     let decklist = new Decklist()
 
@@ -1326,7 +1376,11 @@ function CreateDecklistObjectForDooD(userName, decklistText)
             decklist.addCards(new Card(data["cards"][i].name, data["cards"][i].set["name"], data["cards"][i].number, data["cards"][i].imageUrlHiRes, data["cards"][i].deckCount))
         }    
         
-        SubmitDooDToAPI(userName, decklistText.trim())
+        CreatePrizeSelectorTableView(decklist)
+        if(submitToApi)
+        {
+            SubmitDooDToAPI(userName, decklistText.trim())
+        }
     })
     .catch(error => window.alert(`Woops, something went wrong. Contact Dillonzer with your list: ${error}`));
 }

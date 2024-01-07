@@ -27,12 +27,15 @@
     </div>
 </div>
 <div id="mainBody" class="mainBody" style="display: flex;position: relative;/*! transform: translateX(-20%); */">    
-    <div id="deckSubmission" style="min-width: 20%;max-width: 20%; display: none">
+    <div id="deckSubmission" style="display:flex; min-width: 20%;max-width: 20%; display: none">
         <div style="position: relative;width: 100%;">
             <label for="decklist">Please post your decklist here:</label><br><br>
             <textarea id="decklist" style="height: 397px; width: 90%;"></textarea><br>
             <a id="submitDecklist" onclick="SubmitDecklistForDooD()" class="standardButton" style="width: 80%;">Submit Decklist</a>
         </div>
+    </div>
+    <div id="prizeSelector">
+        <div id="prizeselectortable"></div>
     </div>
 </div>
 <div class="footer">
