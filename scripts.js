@@ -1440,7 +1440,7 @@ function GetUserInformationDooDAdmin()
       
       $.ajax(settings).done(function (response) {
         twitchUser = response.data[0];
-        if(twitchUser.id == "24935580")//56083652
+        if(twitchUser.id == "24935580")//56083652 //24935580
         {
             document.getElementById('connectedToTwitch').style.display = "block";
             document.getElementById('twitchPfp').src = twitchUser.profile_image_url
@@ -1479,12 +1479,14 @@ function GetAllDooDDecks()
 
 function LoadDooDDeckIntoPrizeTracker()
 {
-    var decklist = document.getElementById('select_doodDecks').value
+    var decks = document.getElementById('select_doodDecks')
+    var decklist = decks.value
+    var author = decks[decks.selectedIndex].text
     navigator.clipboard.writeText(decklist);
-    CreateDecklistObjectAdminDood(decklist)
+    CreateDecklistObjectAdminDood(decklist, author)
 }
 
-function CreateDecklistObjectAdminDood(decklistText)
+function CreateDecklistObjectAdminDood(decklistText, author)
 {
     let decklist = new Decklist()
 
@@ -1504,7 +1506,7 @@ function CreateDecklistObjectAdminDood(decklistText)
             body: raw,
             redirect: 'follow'
             }; 
-        fetch(apiUrl+"/deckutils/twitchIntegration/upsert/decklist/dood/24935580"/*+twitchUser.id*/, sendToTwitchRequst)
+        fetch(apiUrl+"/deckutils/twitchIntegration/upsert/decklist/dood/24935580/"+author, sendToTwitchRequst)
     }
 
     let requestOptions = {
