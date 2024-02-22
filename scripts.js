@@ -1486,6 +1486,17 @@ function LoadDooDDeckIntoPrizeTracker()
     CreateDecklistObjectAdminDood(decklist, author)
 }
 
+function DeleteAndLoadNextDooDDeck()
+{
+    DeleteSpecificDooDDeck()
+    var decks = document.getElementById('select_doodDecks')
+    decks.selectedIndex = decks.selectedIndex + 1
+    var decklist = decks.value
+    var author = decks[decks.selectedIndex].text
+    navigator.clipboard.writeText(decklist);
+    CreateDecklistObjectAdminDood(decklist, author)
+}
+
 function CreateDecklistObjectAdminDood(decklistText, author)
 {
     let decklist = new Decklist()
@@ -1506,7 +1517,7 @@ function CreateDecklistObjectAdminDood(decklistText, author)
             body: raw,
             redirect: 'follow'
             }; 
-        fetch(apiUrl+"/deckutils/twitchIntegration/upsert/decklist/dood/24935580/"+author, sendToTwitchRequst)
+        fetch(apiUrl+"/deckutils/twitchIntegration/upsert/decklist/dood/24935580/"+author, sendToTwitchRequst)//56083652 //24935580
     }
 
     let requestOptions = {
