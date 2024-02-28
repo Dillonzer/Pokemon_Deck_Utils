@@ -1458,6 +1458,9 @@ function GetUserInformationDooDAdmin()
 
 function GetAllDooDDecks()
 {
+    var decks = document.getElementById('select_doodDecks')
+    decks.innerHTML = ""
+    doodDecks = []
     var apiCall = apiUrl+"/deckutils/dood/getAllDecks";
     fetch(apiCall).then(response => {
     return response.json();
@@ -1466,11 +1469,39 @@ function GetAllDooDDecks()
             doodDecks.push(new DooDDeck(data[index].twitchUser, data[index].decklist));
         }  
 
-        var decks = document.getElementById('select_doodDecks')
         for(var i = 0; i < doodDecks.length; i++)
         {
             decks.options[decks.options.length] = new Option(doodDecks[i].TwitchUser, doodDecks[i].Decklist);
         }
+        
+    }).catch(err => {
+        console.log(err)
+    });
+}
+
+function GetAllDooDDecksAfterDelete(deckindex)
+{
+    var decks = document.getElementById('select_doodDecks')
+    decks.innerHTML = ""
+    doodDecks = []
+    var apiCall = apiUrl+"/deckutils/dood/getAllDecks";
+    fetch(apiCall).then(response => {
+    return response.json();
+    }).then(data => {
+        for(index in data) {
+            doodDecks.push(new DooDDeck(data[index].twitchUser, data[index].decklist));
+        }  
+
+        for(var i = 0; i < doodDecks.length; i++)
+        {
+            decks.options[decks.options.length] = new Option(doodDecks[i].TwitchUser, doodDecks[i].Decklist);
+        }
+
+        decks.selectedIndex = deckindex
+        var decklist = decks[deckindex].value
+        var author = decks[deckindex].text
+        navigator.clipboard.writeText(decklist);
+        CreateDecklistObjectAdminDood(decklist, author)
         
     }).catch(err => {
         console.log(err)
@@ -1488,13 +1519,9 @@ function LoadDooDDeckIntoPrizeTracker()
 
 function DeleteAndLoadNextDooDDeck()
 {
-    DeleteSpecificDooDDeck()
     var decks = document.getElementById('select_doodDecks')
-    decks.selectedIndex = decks.selectedIndex + 1
-    var decklist = decks[decks.selectedIndex].value
-    var author = decks[decks.selectedIndex].text
-    navigator.clipboard.writeText(decklist);
-    CreateDecklistObjectAdminDood(decklist, author)
+    var deckIndex = decks.selectedIndex
+    DeleteSpecificDooDDeckAndLoadNext(deckIndex)
 }
 
 function CreateDecklistObjectAdminDood(decklistText, author)
@@ -1575,6 +1602,26 @@ function DeleteSpecificDooDDeck()
         
         $.ajax(settings).done(function (response) {
             location.reload()
+        });
+    }
+}
+
+function DeleteSpecificDooDDeckAndLoadNext(index)
+{
+    var deleteAll = window.confirm("ARE YOU SURE?")
+    if(deleteAll)
+    {
+        var sel = document.getElementById('select_doodDecks')
+        var twitchName = sel.options[sel.selectedIndex].text;
+        console.log(twitchName)
+        var settings = {
+            "url": apiUrl+"/deckutils/dood/deleteSpecificDoodDeck/"+twitchName,
+            "method": "DELETE",
+            "timeout": 0
+        };
+        
+        $.ajax(settings).done(function (response) {
+            GetAllDooDDecksAfterDelete(index)
         });
     }
 }
