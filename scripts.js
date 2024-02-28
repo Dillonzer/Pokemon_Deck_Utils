@@ -1480,7 +1480,7 @@ function GetAllDooDDecks()
 function LoadDooDDeckIntoPrizeTracker()
 {
     var decks = document.getElementById('select_doodDecks')
-    var decklist = decks.value
+    var decklist = decks[decks.selectedIndex].value
     var author = decks[decks.selectedIndex].text
     navigator.clipboard.writeText(decklist);
     CreateDecklistObjectAdminDood(decklist, author)
@@ -1491,7 +1491,7 @@ function DeleteAndLoadNextDooDDeck()
     DeleteSpecificDooDDeck()
     var decks = document.getElementById('select_doodDecks')
     decks.selectedIndex = decks.selectedIndex + 1
-    var decklist = decks.value
+    var decklist = decks[decks.selectedIndex].value
     var author = decks[decks.selectedIndex].text
     navigator.clipboard.writeText(decklist);
     CreateDecklistObjectAdminDood(decklist, author)
