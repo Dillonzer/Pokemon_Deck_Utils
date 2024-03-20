@@ -56,6 +56,8 @@ var allCards = []
 var recentCards = []
 var prizedeckLists = []
 let doodDecks = []
+let azulgg = '24935580'
+let dillonzer = '56083652'
 
 var token;
 var twitchUser;
@@ -1440,7 +1442,7 @@ function GetUserInformationDooDAdmin()
       
       $.ajax(settings).done(function (response) {
         twitchUser = response.data[0];
-        if(twitchUser.id == "24935580")//56083652 //24935580
+        if(twitchUser.id == azulgg)
         {
             document.getElementById('connectedToTwitch').style.display = "block";
             document.getElementById('twitchPfp').src = twitchUser.profile_image_url
@@ -1500,7 +1502,6 @@ function GetAllDooDDecksAfterDelete(deckindex)
         decks.selectedIndex = deckindex
         var decklist = decks[deckindex].value
         var author = decks[deckindex].text
-        navigator.clipboard.writeText(decklist);
         CreateDecklistObjectAdminDood(decklist, author)
         
     }).catch(err => {
@@ -1513,7 +1514,6 @@ function LoadDooDDeckIntoPrizeTracker()
     var decks = document.getElementById('select_doodDecks')
     var decklist = decks[decks.selectedIndex].value
     var author = decks[decks.selectedIndex].text
-    navigator.clipboard.writeText(decklist);
     CreateDecklistObjectAdminDood(decklist, author)
 }
 
@@ -1535,6 +1535,8 @@ function CreateDecklistObjectAdminDood(decklistText, author)
 
     let raw = JSON.stringify({"decklist": decklistText.trim()});
     console.log(raw)
+    
+    GetLowRarityList(decklistText.trim()); //UPDATE THIS TO GET LOW RARITY
 
     if(token)
     {
@@ -1544,7 +1546,7 @@ function CreateDecklistObjectAdminDood(decklistText, author)
             body: raw,
             redirect: 'follow'
             }; 
-        fetch(apiUrl+"/deckutils/twitchIntegration/upsert/decklist/dood/24935580/"+author, sendToTwitchRequst)//56083652 //24935580
+        fetch(apiUrl+"/deckutils/twitchIntegration/upsert/decklist/dood/"+azulgg+"/"+author, sendToTwitchRequst)
     }
 
     let requestOptions = {
@@ -1624,5 +1626,33 @@ function DeleteSpecificDooDDeckAndLoadNext(index)
             GetAllDooDDecksAfterDelete(index)
         });
     }
+}
+
+function CopyDooDListToClipboard()
+{    
+    var decks = document.getElementById('select_doodDecks')
+    var decklist = decks[decks.selectedIndex].value
+    navigator.clipboard.writeText(decklist);
+}
+
+function GetLowRarityList(decklist)
+{
+    var myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+    
+    var raw = JSON.stringify({
+      "decklist": decklist });
+    
+    var requestOptions = {
+      method: 'POST',
+      headers: myHeaders,
+      body: raw,
+      redirect: 'follow'
+    };
+    
+    fetch(apiUrl+"/deckutils/generateLowRarityDecklist", requestOptions)
+      .then(response => response.text())
+      .then(result => navigator.clipboard.writeText(result))
+      .catch(error => console.log('error', error)); 
 }
 //#endregion
