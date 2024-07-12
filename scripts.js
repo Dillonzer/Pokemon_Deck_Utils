@@ -1636,22 +1636,29 @@ function CopyDooDListToClipboard()
 
 function GetLowRarityList(decklist)
 {
-    var myHeaders = new Headers();
-    myHeaders.append("Content-Type", "application/json");
-    
     var raw = JSON.stringify({
       "decklist": decklist });
-    
+    var myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
     var requestOptions = {
       method: 'POST',
       headers: myHeaders,
       body: raw,
       redirect: 'follow'
     };
-    
+
     fetch(apiUrl+"/deckutils/generateLowRarityDecklist", requestOptions)
       .then(response => response.text())
-      .then(result => navigator.clipboard.writeText(result))
+      .then(result => {
+        try
+        {
+        navigator.clipboard.writeText(result)
+        }
+        catch(error)
+        {
+            window.alert("Error writing low rarity decklist to clipboard: "+error)
+        }
+        })
       .catch(error => console.log('error', error)); 
 }
 
