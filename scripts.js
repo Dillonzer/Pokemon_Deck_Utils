@@ -1615,7 +1615,6 @@ function DeleteSpecificDooDDeckAndLoadNext(index)
     {
         var sel = document.getElementById('select_doodDecks')
         var twitchName = sel.options[sel.selectedIndex].text;
-        console.log(twitchName)
         var settings = {
             "url": apiUrl+"/deckutils/dood/deleteSpecificDoodDeck/"+twitchName,
             "method": "DELETE",
@@ -1654,5 +1653,20 @@ function GetLowRarityList(decklist)
       .then(response => response.text())
       .then(result => navigator.clipboard.writeText(result))
       .catch(error => console.log('error', error)); 
+}
+
+function CopyLowRarityListToClipboard()
+{
+    var decks = document.getElementById('select_doodDecks')
+    var decklistText = decks[decks.selectedIndex].value
+
+    let decklist = new Decklist()
+
+    decklistText = ReplaceEnergySymbols(decklistText)
+
+    let myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+    
+    GetLowRarityList(decklistText.trim()); 
 }
 //#endregion
