@@ -18,6 +18,20 @@
       font-size: large;
       overflow-x: auto;
       overflow-y: auto;
+      background-color: #333333;
+      color: white;
+    }
+
+    textarea
+    {
+      background-color: #555555;
+      color: white;
+    }
+
+    input
+    {
+      background-color: #555555;
+      color: white;
     }
   
   .mainBody {
@@ -157,6 +171,9 @@
     .prizeCard {      
       height: 225px;
       width: 150px;
+      border-radius: 10px;
+      border-color: white;
+      border-style: solid;
     }
 
     .opaque{
