@@ -13,6 +13,16 @@
     padding-left: 5px; 
   }
   
+
+  textarea::placeholder {
+    color: white;
+    opacity: 1;
+  }
+  
+  ::-ms-input-placeholder { /* Edge 12-18 */
+    color: white;
+  }
+
   body {
       font-family: Arial, Helvetica, sans-serif;
       font-size: large;
