@@ -1,0 +1,44 @@
+#tournamentInfo
+{font-family: "Comic Sans MS", "Comic Sans", cursive;
+    color: white;
+    float: left;
+}
+
+#round
+{    font-family: "Comic Sans MS", "Comic Sans", cursive;
+    color: white;
+    font-size: xx-large;
+    font-weight: bold;
+}
+
+#timer
+{    font-family: "Comic Sans MS", "Comic Sans", cursive;
+    color: white;
+    font-size: large;
+    font-weight: bold;
+    padding-left: 25px;
+}
+
+#wins 
+{font-family: "Comic Sans MS", "Comic Sans", cursive;
+    color: white;
+    font-size: large;
+    font-weight: bold;
+
+}
+
+#losses 
+{font-family: "Comic Sans MS", "Comic Sans", cursive;
+    color: white;
+    font-size: large;
+    font-weight: bold;
+    padding-left: 75px;
+}
+
+#tname
+{font-family: "Comic Sans MS", "Comic Sans", cursive;
+    color: white;
+    font-size: large;
+    font-weight: bold;
+    text-align: center;
+}
