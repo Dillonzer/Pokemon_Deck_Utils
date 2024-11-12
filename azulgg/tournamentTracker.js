@@ -7,7 +7,7 @@ function Tournament(name, format, round)
   this.Ongoing = true;
 }
 
-var playerName = 'azulgg'
+var playerName = 'jonah2705'
 var tournamentId, tournamentObject, wins, losses, ties
 
 function setTournament() {
@@ -109,10 +109,10 @@ var updateInformation = function() {
     
         if(response.tournament.roundEnd != null)
         {
-          if(response.player.record.wins + response.player.record.losses + response.player.record.ties == tournamentObject.Round)
+          if(response.match.completed)
           {
-            document.getElementById("round").textContent = "Round " + (tournamentObject.Round + 1) + " Up Next"
             clearInterval(timerFunction)
+            document.getElementById("round").textContent = "Round " + (tournamentObject.Round + 1) + " Up Next"
           }
           else
           {
