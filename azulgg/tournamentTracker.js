@@ -47,7 +47,6 @@ function start(){
 
 function setTournamentInformation()
 {
-  document.getElementById("tname").textContent = tournamentObject.Name  
   updateInformation()
   setInterval(updateInformation, 30000)
 }
@@ -105,16 +104,22 @@ var updateInformation = function() {
         }
         
 
-        document.getElementById("wins").textContent = "WINS: " + response.player.record.wins 
-        document.getElementById("losses").textContent = "LOSSES: " + response.player.record.losses
-        //document.getElementById("ties").textContent = "TIES: " + response.player.record.ties       
+        document.getElementById("record").textContent = "W/L/T: " + response.player.record.wins + "-" + response.player.record.losses + "-" + response.player.record.ties
         
     
         if(response.tournament.roundEnd != null)
         {
-          tournamentObject.RoundEnd = new Date(response.tournament.roundEnd)
-          clearInterval(timerFunction)
-          setInterval(timerFunction, 1100)
+          if(response.player.record.wins + response.player.record.losses + response.player.record.ties == tournamentObject.Round)
+          {
+            document.getElementById("round").textContent = "Round " + (tournamentObject.Round + 1) + " Up Next"
+            clearInterval(timerFunction)
+          }
+          else
+          {
+            tournamentObject.RoundEnd = new Date(response.tournament.roundEnd)
+            clearInterval(timerFunction)
+            setInterval(timerFunction, 1100)
+          }
         }
         else
         {        
