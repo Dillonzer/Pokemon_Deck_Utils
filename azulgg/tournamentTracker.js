@@ -7,7 +7,7 @@ function Tournament(name, format, round)
   this.Ongoing = true;
 }
 
-var playerName = 'jonah2705'
+var playerName = 'azulgg'
 var tournamentId, tournamentObject, wins, losses, ties
 
 function setTournament() {
