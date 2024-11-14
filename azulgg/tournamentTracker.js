@@ -8,7 +8,7 @@ function Tournament(name, format, round)
 }
 
 var playerName = 'azulgg'
-var tournamentId, tournamentObject, wins, losses, ties
+var tournamentId, tournamentObject, wins, losses, ties, timerInterval
 
 function setTournament() {
     url = "https://play.limitlesstcg.com/ext/dillonzer/init?username="+playerName+"&tournamentId="+tournamentId
@@ -74,7 +74,7 @@ var timerFunction = async function() {
     document.getElementById("round").textContent = "Round: " + currentRound + " - "+ minutes + ":" + stringSeconds
     
     if (timeleft <= 0) {
-      clearInterval(timerFunction);    
+      clearInterval(timerInterval);    
       document.getElementById("round").textContent = "ROUND OVER"
       updateInformation()
     }
@@ -111,14 +111,14 @@ var updateInformation = function() {
         {
           if(response.match.completed)
           {
-            clearInterval(timerFunction)
+            clearInterval(timerInterval)
             document.getElementById("round").textContent = "Round " + (tournamentObject.Round + 1) + " Up Next"
           }
           else
           {
             tournamentObject.RoundEnd = new Date(response.tournament.roundEnd)
-            clearInterval(timerFunction)
-            setInterval(timerFunction, 1100)
+            clearInterval(timerInterval)
+            timerInterval = setInterval(timerFunction, 1100)
           }
         }
         else
