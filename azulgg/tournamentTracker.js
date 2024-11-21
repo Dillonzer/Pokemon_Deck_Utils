@@ -7,7 +7,7 @@ function Tournament(name, format, round)
   this.Ongoing = true;
 }
 
-var playerName = 'speedlemon'
+var playerName = 'kingheracross'
 var tournamentId, tournamentObject, wins, losses, ties, timerInterval
 var standingsObject
 var intervalCleared = true
@@ -90,10 +90,10 @@ function standings()
   $.ajax(settings).done(function (response) {
     standingsObject = response   
     //calculate here to find what round we are in
-    WhatTopCutRound(standingsObject[16].username, 16)
-    WhatTopCutRound(standingsObject[8].username, 8)
-    WhatTopCutRound(standingsObject[4].username, 4)
-    WhatTopCutRound(standingsObject[2].username, 2) 
+    WhatTopCutRound(standingsObject.find(s => s.placing == 17).username, 16)
+    WhatTopCutRound(standingsObject.find(s => s.placing == 9).username, 8)
+    WhatTopCutRound(standingsObject.find(s => s.placing == 5).username, 4)
+    WhatTopCutRound(standingsObject.find(s => s.placing == 3).username, 2) 
   });
 }
 
@@ -190,9 +190,33 @@ var updateInformation = function() {
         tournamentObject.Round = response.tournament.round
         tournamentObject.Ongoing = response.tournament.ongoing       
         
-
-        document.getElementById("record").textContent = "W/L/T: " + response.player.record.wins + "-" + response.player.record.losses + "-" + response.player.record.ties
+        if(!response.match.completed)
+        {
+          document.getElementById("record").textContent = "W/L/T: " + response.player.record.wins + "-" + response.player.record.losses + "-" + response.player.record.ties
+        }
+        else
+        {
+          if(response.player.record.wins + response.player.record.losses + response.player.record.ties != response.tournament.round)
+          {
+            if(response.match.playerScore > response.match.oppScore)
+            {
+              document.getElementById("record").textContent = "W/L/T: " + (response.player.record.wins + 1) + "-" + response.player.record.losses + "-" + response.player.record.ties
+            }
+            else if(response.match.playerScore < response.match.oppScore)
+            {
+              document.getElementById("record").textContent = "W/L/T: " + response.player.record.wins + "-" + (response.player.record.losses + 1) + "-" + response.player.record.ties
+            }
+            else if(response.match.playerScore == response.match.oppScore)
+            {
+              document.getElementById("record").textContent = "W/L/T: " + response.player.record.wins + "-" + response.player.record.losses + "-" + (response.player.record.ties + 1)
+            }
+          }
+        }
         
+        if(topcut)
+        {          
+          document.getElementById("record").textContent = "Match Score: " + response.match.playerScore + "-" + response.match.oppScore       
+        }
     
         if(response.tournament.roundEnd != null)
         {
