@@ -7,7 +7,7 @@ function Tournament(name, format, round)
   this.Ongoing = true;
 }
 
-var playerName = 'kingheracross'
+var playerName = 'julce92'
 var tournamentId, tournamentObject, wins, losses, ties, timerInterval
 var standingsObject
 var intervalCleared = true
@@ -122,6 +122,12 @@ function setTournamentInformation()
 }
 
 var timerFunction = async function() {  
+  if(intervalCleared)
+    {
+      clearInterval(timerInterval)
+      return
+    }
+
   if(typeof tournamentObject.RoundEnd != 'undefined')
   {
     var now = new Date().getTime();
@@ -189,33 +195,36 @@ var updateInformation = function() {
     $.ajax(settings).done(function (response) {
         tournamentObject.Round = response.tournament.round
         tournamentObject.Ongoing = response.tournament.ongoing       
-        
-        if(!response.match.completed)
-        {
-          document.getElementById("record").textContent = "W/L/T: " + response.player.record.wins + "-" + response.player.record.losses + "-" + response.player.record.ties
-        }
-        else
-        {
-          if(response.player.record.wins + response.player.record.losses + response.player.record.ties != response.tournament.round)
-          {
-            if(response.match.playerScore > response.match.oppScore)
-            {
-              document.getElementById("record").textContent = "W/L/T: " + (response.player.record.wins + 1) + "-" + response.player.record.losses + "-" + response.player.record.ties
-            }
-            else if(response.match.playerScore < response.match.oppScore)
-            {
-              document.getElementById("record").textContent = "W/L/T: " + response.player.record.wins + "-" + (response.player.record.losses + 1) + "-" + response.player.record.ties
-            }
-            else if(response.match.playerScore == response.match.oppScore)
-            {
-              document.getElementById("record").textContent = "W/L/T: " + response.player.record.wins + "-" + response.player.record.losses + "-" + (response.player.record.ties + 1)
-            }
-          }
-        }
+                
         
         if(topcut)
         {          
           document.getElementById("record").textContent = "Match Score: " + response.match.playerScore + "-" + response.match.oppScore       
+        }
+        else
+        { 
+          if(!response.match.completed)
+          {
+            document.getElementById("record").textContent = "W/L/T: " + response.player.record.wins + "-" + response.player.record.losses + "-" + response.player.record.ties
+          }
+          else
+          {
+            if(response.player.record.wins + response.player.record.losses + response.player.record.ties != response.tournament.round)
+            {
+              if(response.match.playerScore > response.match.oppScore)
+              {
+                document.getElementById("record").textContent = "W/L/T: " + (response.player.record.wins + 1) + "-" + response.player.record.losses + "-" + response.player.record.ties
+              }
+              else if(response.match.playerScore < response.match.oppScore)
+              {
+                document.getElementById("record").textContent = "W/L/T: " + response.player.record.wins + "-" + (response.player.record.losses + 1) + "-" + response.player.record.ties
+              }
+              else if(response.match.playerScore == response.match.oppScore)
+              {
+                document.getElementById("record").textContent = "W/L/T: " + response.player.record.wins + "-" + response.player.record.losses + "-" + (response.player.record.ties + 1)
+              }
+            }
+          }
         }
     
         if(response.tournament.roundEnd != null)
@@ -227,6 +236,7 @@ var updateInformation = function() {
             console.log("Match Completed")
             if(!intervalCleared)
             {
+                console.log("Timer interval cleared")
                 clearInterval(timerInterval)
                 intervalCleared = true
             }
