@@ -124,6 +124,7 @@ function start(){
       if(value.status == "ONGOING")
       {
         tournamentId = value.id
+        document.getElementById("record").textContent = "W/L/T 0-0-0"
         setTournament()
         tournamentStarted = true
         return
@@ -137,6 +138,10 @@ function start(){
             countdownInterval = setInterval(countDownFunction, 1100)
             return
         }
+
+        console.log("Tournament not started yet - try again")
+        document.getElementById("round").textContent = "Waiting for start..."
+        start()
       }
     });
   });
@@ -206,15 +211,38 @@ var countDownFunction = async function() {
     return
   }
 
-  var now = new Date().getTime();
-  console.log(tournamentStartingObject.date)
+  var now = new Date();
+  var now_utc = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(),
+  now.getUTCDate(), now.getUTCHours(),
+  now.getUTCMinutes(), now.getUTCSeconds());
   var startTime = new Date(tournamentStartingObject.date).getTime();
-  var timeleft =  startTime - now;
+  var timeleft =  startTime - now_utc;
   
   var hours = Math.floor((timeleft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
   var minutes = Math.floor((timeleft % (1000 * 60 * 60)) / (1000 * 60));
   var seconds = Math.floor((timeleft % (1000 * 60)) / 1000);
+  var stringHours = ""
+  var stringMinutes = ""
   var stringSeconds = ""
+  
+  if(hours.toString().length == 1)
+  {
+    stringHours = "0" + hours
+  }
+  else
+  {
+    stringHours = hours
+  }
+    
+  if(minutes.toString().length == 1)
+  {
+    stringMinutes = "0" + minutes
+  }
+  else
+  {
+    stringMinutes = minutes
+  }
+
   if(seconds.toString().length == 1)
   {
     stringSeconds = "0" + seconds
@@ -224,15 +252,17 @@ var countDownFunction = async function() {
     stringSeconds = seconds
   }
 
-  document.getElementById("round").textContent = "Tournament in: "+ hours + ":" + minutes + ":" + stringSeconds
 
   if(hours <= 0 && minutes <= 0 && seconds <= 0)
   {
+    console.log("test")
     clearInterval(countdownInterval)
     start()
   }
-  
-  
+  else
+  {    
+    document.getElementById("round").textContent = "Tournament in: "+ stringHours + ":" + stringMinutes + ":" + stringSeconds
+  }
 }
 
 var updateInformation = function() {
