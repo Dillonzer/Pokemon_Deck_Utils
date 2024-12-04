@@ -221,36 +221,6 @@ var countDownFunction = async function() {
   var hours = Math.floor((timeleft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
   var minutes = Math.floor((timeleft % (1000 * 60 * 60)) / (1000 * 60));
   var seconds = Math.floor((timeleft % (1000 * 60)) / 1000);
-  var stringHours = ""
-  var stringMinutes = ""
-  var stringSeconds = ""
-  
-  if(hours.toString().length == 1)
-  {
-    stringHours = "0" + hours
-  }
-  else
-  {
-    stringHours = hours
-  }
-    
-  if(minutes.toString().length == 1)
-  {
-    stringMinutes = "0" + minutes
-  }
-  else
-  {
-    stringMinutes = minutes
-  }
-
-  if(seconds.toString().length == 1)
-  {
-    stringSeconds = "0" + seconds
-  }
-  else
-  {
-    stringSeconds = seconds
-  }
 
 
   if(hours <= 0 && minutes <= 0 && seconds <= 0)
@@ -261,7 +231,7 @@ var countDownFunction = async function() {
   }
   else
   {    
-    document.getElementById("round").textContent = "Tournament in: "+ stringHours + ":" + stringMinutes + ":" + stringSeconds
+    document.getElementById("round").textContent = "Tournament in: "+ hours + "h " + minutes + "m"
   }
 }
 
