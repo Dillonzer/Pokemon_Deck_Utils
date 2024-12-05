@@ -21,6 +21,7 @@ let top8 = true
 let top4 = true
 let finals = true
 let tournamentStarted = false
+let matchOver = false
 
 function setTournament() {
     url = "https://play.limitlesstcg.com/ext/dillonzer/init?username="+playerName+"&tournamentId="+tournamentId
@@ -192,7 +193,14 @@ var timerFunction = async function() {
     }
     else
     {
-      document.getElementById("round").textContent = "Round " + currentRound + " - "+ minutes + ":" + stringSeconds
+      if(matchOver)
+      {
+        document.getElementById("round").textContent = "Round " + (currentRound+1) + " starts in "+ minutes + "m " + stringSeconds + "s"
+      }
+      else
+      {
+         document.getElementById("round").textContent = "Round " + currentRound + " - "+ minutes + ":" + stringSeconds
+      }
     }
     
     if (timeleft <= 0 && !topcut) {
@@ -252,7 +260,9 @@ var updateInformation = function() {
     
     $.ajax(settings).done(function (response) {
         tournamentObject.Round = response.tournament.round
-        tournamentObject.Ongoing = response.tournament.ongoing       
+        tournamentObject.Ongoing = response.tournament.ongoing  
+        
+        matchOver = response.match.completed     
                 
         
         if(topcut)
@@ -266,7 +276,7 @@ var updateInformation = function() {
             document.getElementById("record").textContent = "W/L/T: " + response.player.record.wins + "-" + response.player.record.losses + "-" + response.player.record.ties
           }
           else
-          {
+          {            
             if(response.player.record.wins + response.player.record.losses + response.player.record.ties != response.tournament.round)
             {
               if(response.match.playerScore > response.match.oppScore)
@@ -292,17 +302,8 @@ var updateInformation = function() {
           if(response.match.completed)
           {
             console.log("Match Completed")
-            if(!intervalCleared)
-            {
-                console.log("Timer interval cleared")
-                clearInterval(timerInterval)
-                intervalCleared = true
-            }
-            if(!topcut)
-            {
-                document.getElementById("round").textContent = "Round " + (tournamentObject.Round + 1) + " Up Next"
-            }
-            else
+
+            if(topcut)
             {
               document.getElementById("round").textContent = "Top " + topcutNumber + " Finished"
 
@@ -343,7 +344,7 @@ var updateInformation = function() {
         }
       
     });
-  } 
+} 
 
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
