@@ -239,7 +239,7 @@ var countDownFunction = async function() {
   }
   else
   {    
-    document.getElementById("round").textContent = "Tournament in: "+ hours + "h " + minutes + "m"
+    document.getElementById("round").textContent = "!Tournament in: "+ hours + "h " + minutes + "m"
   }
 }
 
