@@ -182,20 +182,22 @@ var timerFunction = async function() {
 
     if(topcut)
     {  
-      if(topcutNumber == 2) 
-      {
-        document.getElementById("round").textContent = "Finals"
-      }  
-      else
-      {
-        document.getElementById("round").textContent = "Top " + topcutNumber        
-      }
+      document.getElementById("round").textContent = "Topcut"
+      // Waiting for fix from Robin
+      // if(topcutNumber == 2) 
+      // {
+      //   document.getElementById("round").textContent = "Finals"
+      // }  
+      // else
+      // {
+      //   document.getElementById("round").textContent = "Top " + topcutNumber        
+      // }
     }
     else
     {
       if(matchOver)
       {
-        document.getElementById("round").textContent = "Round " + (currentRound+1) + " starts in "+ minutes + "m " + stringSeconds + "s"
+        document.getElementById("round").textContent = "Round " + (currentRound+1) + " starts in "+ minutes + "m"
       }
       else
       {
@@ -233,7 +235,6 @@ var countDownFunction = async function() {
 
   if(hours <= 0 && minutes <= 0 && seconds <= 0)
   {
-    console.log("test")
     clearInterval(countdownInterval)
     start()
   }
@@ -266,8 +267,9 @@ var updateInformation = function() {
                 
         
         if(topcut)
-        {    
-          document.getElementById("record").textContent = "Match Score: " + response.match.playerScore + "-" + response.match.oppScore       
+        {   
+          document.getElementById("record").textContent = "!Tournament for current round stats"
+          //document.getElementById("record").textContent = "Match Score: " + response.match.playerScore + "-" + response.match.oppScore       
         }
         else
         { 
@@ -305,24 +307,24 @@ var updateInformation = function() {
 
             if(topcut)
             {
-              document.getElementById("round").textContent = "Top " + topcutNumber + " Finished"
+              // document.getElementById("round").textContent = "Top " + topcutNumber + " Finished"
 
-              if(!topcutAddition)
-              {
-                topcutAddition = true
-                switch(topcutNumber) {
-                  case 16:
-                    topcutNumber = 8
-                    break;
-                  case 8:
-                    topcutNumber = 4
-                    break;
-                  case 4:
-                    topcutNumber = 2
-                    break;
-                  default:
-                } 
-              }
+              // if(!topcutAddition)
+              // {
+              //   topcutAddition = true
+              //   switch(topcutNumber) {
+              //     case 16:
+              //       topcutNumber = 8
+              //       break;
+              //     case 8:
+              //       topcutNumber = 4
+              //       break;
+              //     case 4:
+              //       topcutNumber = 2
+              //       break;
+              //     default:
+              //   } 
+              // }
 
             }
           }
