@@ -31,6 +31,11 @@
         <div style="position: relative;width: 100%;">
             <label for="select_doodDecks">Choose a DooD Deck:</label>
             <select name="select_doodDecks" id="select_doodDecks"></select>
+            <br />
+            <br />
+            <input type="checkbox" disabled id="goFirst">First</input>
+            <br />
+            <input type="checkbox" disabled id="goSecond">Second</input>
             <button class="standardButton" id="loadDooDList" style="margin-top: 1vh;" onclick="LoadDooDDeckIntoPrizeTracker()">Load List</button>
             <button class="standardButton" id="deleteAndLoad" style="margin-top: 1vh;" onclick="DeleteAndLoadNextDooDDeck()">Delete and Load Next List</button>
             <button class="standardButton" id="deleteDooDList" style="margin-top: 1vh;" onclick="DeleteSpecificDooDDeck()">Delete this DooD List</button>

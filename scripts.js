@@ -37,10 +37,11 @@ function PrizeDecklists(name, decklist)
     this.Decklist = decklist
 }
 
-function DooDDeck(twitchUser, decklist)
+function DooDDeck(twitchUser, decklist, goFirst)
 {
     this.TwitchUser = twitchUser;
     this.Decklist = decklist
+    this.GoFirst = goFirst
 }
 
 let prizeCards = [];
@@ -57,7 +58,7 @@ var recentCards = []
 var prizedeckLists = []
 let doodDecks = []
 let azulgg = '24935580'
-let dillonzer = '56083652'
+//let azulgg = '56083652' //dillonzerid
 
 var token;
 var twitchUser;
@@ -1299,7 +1300,7 @@ function FillInSubmittedDooDDeck(userName)
     return response.json();
     }).then(data => {
         for(index in data) {
-            doodDecks.push(new DooDDeck(data[index].twitchUser, data[index].decklist));
+            doodDecks.push(new DooDDeck(data[index].twitchUser, data[index].decklist, data[index].goFirst));
         }  
 
         for(i in doodDecks)
@@ -1307,7 +1308,7 @@ function FillInSubmittedDooDDeck(userName)
             if(doodDecks[i].TwitchUser == userName)
             {                
                 document.getElementById('decklist').value = doodDecks[i].Decklist                
-                CreateDecklistObjectForDooD(twitchUser.display_name, doodDecks[i].Decklist, false)  
+                CreateDecklistObjectForDooD(twitchUser.display_name, doodDecks[i].Decklist, doodDecks[i].GoFirst, false)  
                 break;
             }
         }
@@ -1341,7 +1342,8 @@ function SubmitDecklistForDooD() {
             if(xhr.status == 200)
             {      
                 let decklistText = document.getElementById('decklist').value;
-                CreateDecklistObjectForDooD(twitchUser.display_name, decklistText, true)   
+                let goFirst = document.getElementById("blindpick_first").checked
+                CreateDecklistObjectForDooD(twitchUser.display_name, decklistText, goFirst, true)   
             }  
         })
         .catch(error => window.alert("You are not subbed to AzulGG on Twitch. Please sub for access to DooD."));
@@ -1349,7 +1351,7 @@ function SubmitDecklistForDooD() {
     
 }
 
-function CreateDecklistObjectForDooD(userName, decklistText, submitToApi)
+function CreateDecklistObjectForDooD(userName, decklistText, goFirst, submitToApi)
 {
     let decklist = new Decklist()
 
@@ -1377,19 +1379,30 @@ function CreateDecklistObjectForDooD(userName, decklistText, submitToApi)
         {
             decklist.addCards(new Card(data["cards"][i].name, data["cards"][i].set["name"], data["cards"][i].number, data["cards"][i].imageUrlHiRes, data["cards"][i].deckCount))
         }    
+
+        if(goFirst)
+        {
+            document.getElementById("blindpick_first").checked = true
+            document.getElementById("blindpick_second").checked = false
+        }
+        else
+        {
+            document.getElementById("blindpick_first").checked = false
+            document.getElementById("blindpick_second").checked = true
+        }
         
         CreatePrizeSelectorTableView(decklist)
         if(submitToApi)
         {
-            SubmitDooDToAPI(userName, decklistText.trim())
+            SubmitDooDToAPI(userName, decklistText.trim(), goFirst)
         }
     })
     .catch(error => window.alert(`Woops, something went wrong. Contact Dillonzer with your list: ${error}`));
 }
 
-function SubmitDooDToAPI(userName, decklist)
+function SubmitDooDToAPI(userName, decklist, goFirst)
 {
-    let body = JSON.stringify({"TwitchUser": userName, "Decklist": decklist})
+    let body = JSON.stringify({"TwitchUser": userName, "Decklist": decklist, "GoFirst": goFirst})
     let myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
     let requestOptions = {
@@ -1468,7 +1481,7 @@ function GetAllDooDDecks()
     return response.json();
     }).then(data => {
         for(index in data) {
-            doodDecks.push(new DooDDeck(data[index].twitchUser, data[index].decklist));
+            doodDecks.push(new DooDDeck(data[index].twitchUser, data[index].decklist, data[index].goFirst));
         }  
 
         for(var i = 0; i < doodDecks.length; i++)
@@ -1491,7 +1504,7 @@ function GetAllDooDDecksAfterDelete(deckindex)
     return response.json();
     }).then(data => {
         for(index in data) {
-            doodDecks.push(new DooDDeck(data[index].twitchUser, data[index].decklist));
+            doodDecks.push(new DooDDeck(data[index].twitchUser, data[index].decklist, data[index].goFirst));
         }  
 
         for(var i = 0; i < doodDecks.length; i++)
@@ -1514,6 +1527,23 @@ function LoadDooDDeckIntoPrizeTracker()
     var decks = document.getElementById('select_doodDecks')
     var decklist = decks[decks.selectedIndex].value
     var author = decks[decks.selectedIndex].text
+    var goFirst = doodDecks.find(x => x.TwitchUser === author).GoFirst
+    console.log(goFirst)
+    if(undefined == goFirst)
+    {
+        document.getElementById('goFirst').checked = false
+        document.getElementById('goSecond').checked = false
+    }
+    else if(goFirst)
+    {
+        document.getElementById('goFirst').checked = true
+        document.getElementById('goSecond').checked = false
+    }
+    else
+    {        
+        document.getElementById('goFirst').checked = false
+        document.getElementById('goSecond').checked = true
+    }
     CreateDecklistObjectAdminDood(decklist, author)
 }
 
