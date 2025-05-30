@@ -150,16 +150,16 @@ function CreateDecklistObject(decklistText)
     let raw = JSON.stringify({"decklist": decklistText.trim()});
     console.log(raw)
 
-    if(token)
-    {
+     if(token)
+     {
         let sendToTwitchRequst = {
             method: 'POST',
             headers: myHeaders,
             body: raw,
             redirect: 'follow'
             }; 
-        fetch(apiUrl+"/deckutils/twitchIntegration/upsert/decklist/"+twitchUser.id, sendToTwitchRequst)
-    }
+        fetch(apiUrl+"/deckutils/twitchIntegration/upsert/decklist/"+azulgg, sendToTwitchRequst)
+     }
 
     let requestOptions = {
     method: 'POST',
@@ -1532,17 +1532,23 @@ function LoadDooDDeckIntoPrizeTracker()
     if(undefined == goFirst)
     {
         document.getElementById('goFirst').checked = false
+        document.getElementById('goFirstSpan').style.border = ""
         document.getElementById('goSecond').checked = false
+        document.getElementById('goSecondSpan').style.border = ""
     }
     else if(goFirst)
     {
         document.getElementById('goFirst').checked = true
+        document.getElementById('goFirstSpan').style.border = "thick solid rgb(0, 255, 0)"
         document.getElementById('goSecond').checked = false
+        document.getElementById('goSecondSpan').style.border = ""
     }
     else
     {        
         document.getElementById('goFirst').checked = false
+        document.getElementById('goFirstSpan').style.border = ""
         document.getElementById('goSecond').checked = true
+        document.getElementById('goSecondSpan').style.border = "thick solid rgb(0, 255, 0)"
     }
     CreateDecklistObjectAdminDood(decklist, author)
 }
@@ -1562,43 +1568,59 @@ function CreateDecklistObjectAdminDood(decklistText, author)
 
     let myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
+    var raw = JSON.stringify({"decklist": decklistText });
 
-    let raw = JSON.stringify({"decklist": decklistText.trim()});
-    console.log(raw)
-    
-    GetLowRarityList(decklistText.trim()); //UPDATE THIS TO GET LOW RARITY
-
-    if(token)
-    {
-        let sendToTwitchRequst = {
-            method: 'POST',
-            headers: myHeaders,
-            body: raw,
-            redirect: 'follow'
-            }; 
-        fetch(apiUrl+"/deckutils/twitchIntegration/upsert/decklist/dood/"+azulgg+"/"+author, sendToTwitchRequst)
-    }
-
-    let requestOptions = {
-    method: 'POST',
-    headers: myHeaders,
-    body: raw,
-    redirect: 'follow'
+    var requestOptions = {
+      method: 'POST',
+      headers: myHeaders,
+      body: raw,
+      redirect: 'follow'
     };
 
-    fetch(apiUrl+"/deckutils/generateDecklist", requestOptions)
-    .then(response => {
-        return response.json()
-        })
-    .then(data => {
-        for(let i = 0; i < data["cards"].length; i++)
+    fetch(apiUrl+"/deckutils/generateLowRarityDecklist", requestOptions)
+      .then(response => response.text())
+      .then(result => {
+        try
         {
-            decklist.addCards(new Card(data["cards"][i].name, data["cards"][i].set["name"], data["cards"][i].number, data["cards"][i].imageUrlHiRes, data["cards"][i].deckCount))
-        }    
+            navigator.clipboard.writeText(result)
+            if(token)
+            {
+                let sendToTwitchRequst = {
+                    method: 'POST',
+                    headers: myHeaders,
+                    body: raw,
+                    redirect: 'follow'
+                    }; 
+                fetch(apiUrl+"/deckutils/twitchIntegration/upsert/decklist/dood/"+azulgg+"/"+author, sendToTwitchRequst)
+            }
 
-        CreatePrizeSelectorTable(decklist)
-    })
-    .catch(error => window.alert("Woops, something went wrong. Contact Dillonzer with your list."));
+            let requestOptions2 = {
+            method: 'POST',
+            headers: myHeaders,
+            body: JSON.stringify({"decklist": result }),
+            redirect: 'follow'
+            };
+
+            fetch(apiUrl+"/deckutils/generateDecklist", requestOptions2)
+            .then(response => {
+                return response.json()
+                })
+            .then(data => {
+                for(let i = 0; i < data["cards"].length; i++)
+                {
+                    decklist.addCards(new Card(data["cards"][i].name, data["cards"][i].set["name"], data["cards"][i].number, data["cards"][i].imageUrlHiRes, data["cards"][i].deckCount))
+                }    
+
+                CreatePrizeSelectorTable(decklist)
+            })
+            .catch(error => window.alert("Woops, something went wrong. Contact Dillonzer with your list."));
+        }
+        catch(error)
+        {
+            window.alert("Error loading low rarity decklist: "+error)
+        }
+        })
+      .catch(error => console.log('error', error));     
 }
  
 function PurgeDooDDecks()
@@ -1690,6 +1712,7 @@ function GetLowRarityList(decklist)
         }
         })
       .catch(error => console.log('error', error)); 
+
 }
 
 function CopyLowRarityListToClipboard()
