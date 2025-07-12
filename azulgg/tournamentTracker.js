@@ -152,9 +152,6 @@ function start() {
     });
     if (!tournamentStarted) {
       countdownInterval = setInterval(countDownFunction, 1100);
-    } else {
-      start();
-      console.log("t");
     }
   });
 }
