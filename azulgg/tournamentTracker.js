@@ -139,18 +139,23 @@ function start() {
       if (!tournamentStarted) {
         if (value.status == "UPCOMING") {
           if (tStartDate === undefined) {
-            tStartDate = value.date;
+            tStartDate = new Date(value.date);
+            tournamentStartingObject = value;
           }
 
-          tournamentStartingObject = value;
-          countdownInterval = setInterval(countDownFunction, 1100);
-          return;
+          if (tStartDate > new Date(value.date)) {
+            tStartDate = new Date(value.date);
+            tournamentStartingObject = value;
+          }
         }
-
-        document.getElementById("round").textContent = "Waiting for start...";
-        start();
       }
     });
+    if (!tournamentStarted) {
+      countdownInterval = setInterval(countDownFunction, 1100);
+    } else {
+      start();
+      console.log("t");
+    }
   });
 }
 
@@ -220,7 +225,7 @@ var countDownFunction = async function () {
   var hours = Math.floor((timeleft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
   var minutes = Math.floor((timeleft % (1000 * 60 * 60)) / (1000 * 60));
   var seconds = Math.floor((timeleft % (1000 * 60)) / 1000);
-
+  console.log(hours);
   if (hours <= 0 && minutes <= 0 && seconds <= 0) {
     clearInterval(countdownInterval);
     start();
