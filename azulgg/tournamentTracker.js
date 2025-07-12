@@ -195,7 +195,7 @@ var timerFunction = async function () {
       // }
     } else {
       if (matchOver) {
-        document.getElementById("round").textContent = "Round " + (currentRound + 1) + "/" + totalRounds + " starts in " + minutes + "m";
+        document.getElementById("round").textContent = "Round " + (currentRound + 1) + "/" + totalRounds + " in " + minutes + "m";
       } else {
         document.getElementById("round").textContent = "Round " + currentRound + "/" + totalRounds + " - " + minutes + ":" + stringSeconds;
       }
