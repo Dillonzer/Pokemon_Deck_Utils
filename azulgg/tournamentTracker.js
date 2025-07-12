@@ -22,7 +22,8 @@ let finals = true;
 let tournamentStarted = false;
 let matchOver = false;
 let totalRounds = 0;
-let startDate = new Date(0);
+let tStartDate;
+
 function setTournament() {
   url = "https://play.limitlesstcg.com/ext/dillonzer/init?username=" + playerName + "&tournamentId=" + tournamentId;
 
@@ -137,6 +138,10 @@ function start() {
 
       if (!tournamentStarted) {
         if (value.status == "UPCOMING") {
+          if (tStartDate === undefined) {
+            tStartDate = value.date;
+          }
+
           tournamentStartingObject = value;
           countdownInterval = setInterval(countDownFunction, 1100);
           return;
@@ -188,7 +193,7 @@ var timerFunction = async function () {
       // }
     } else {
       if (matchOver) {
-        document.getElementById("round").textContent = "Round " + (currentRound + 1) + " starts in " + minutes + "m";
+        document.getElementById("round").textContent = "Round " + (currentRound + 1) + "/" + totalRounds + " starts in " + minutes + "m";
       } else {
         document.getElementById("round").textContent = "Round " + currentRound + "/" + totalRounds + " - " + minutes + ":" + stringSeconds;
       }
