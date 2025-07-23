@@ -158,7 +158,7 @@ function CreateDecklistObject(decklistText)
             body: raw,
             redirect: 'follow'
             }; 
-        fetch(apiUrl+"/deckutils/twitchIntegration/upsert/decklist/"+azulgg, sendToTwitchRequst)
+        fetch(apiUrl+"/deckutils/twitchIntegration/upsert/decklist/"+twitchUser.id, sendToTwitchRequst)
      }
 
     let requestOptions = {
