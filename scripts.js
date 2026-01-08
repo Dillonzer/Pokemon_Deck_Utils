@@ -294,19 +294,19 @@ function SetPrizeCards(card, cardAmountSpan) {
     let myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
     var raw =
-      '{ "Prize1": "' + prizeCards[0]?.Image ??
-      "images/cardBack.png" + '","Prize2": "' + prizeCards[1]?.Image ??
-      "images/cardBack.png" + '","Prize3": "' + prizeCards[2]?.Image ??
-      "images/cardBack.png" + '","Prize4": "' + prizeCards[3]?.Image ??
-      "images/cardBack.png" + '","Prize5": "' + prizeCards[4]?.Image ??
-      "images/cardBack.png" + '","Prize6": "' + prizeCards[5]?.Image ??
-      "images/cardBack.png" + '","Prize1Taken": ' + prizeCards[0]?.Taken ??
-      false + ',"Prize2Taken": ' + prizeCards[1]?.Taken ??
-      false + ',"Prize3Taken": ' + prizeCards[2]?.Taken ??
-      false + ',"Prize4Taken": ' + prizeCards[3]?.Taken ??
-      false + ',"Prize5Taken": ' + prizeCards[4]?.Taken ??
-      false + ',"Prize6Taken": ' + prizeCards[5]?.Taken ??
-      false + "}";
+      '{ "Prize1": "' + (prizeCards[0]?.Image ??
+      "images/cardBack.png") + '","Prize2": "' + (prizeCards[1]?.Image ??
+      "images/cardBack.png") + '","Prize3": "' + (prizeCards[2]?.Image ??
+      "images/cardBack.png") + '","Prize4": "' + (prizeCards[3]?.Image ??
+      "images/cardBack.png") + '","Prize5": "' + (prizeCards[4]?.Image ??
+      "images/cardBack.png")+ '","Prize6": "' + (prizeCards[5]?.Image ??
+      "images/cardBack.png") + '","Prize1Taken": ' + (prizeCards[0]?.Taken ??
+      false) + ',"Prize2Taken": ' + (prizeCards[1]?.Taken ??
+      false) + ',"Prize3Taken": ' + (prizeCards[2]?.Taken ??
+      false) + ',"Prize4Taken": ' + (prizeCards[3]?.Taken ??
+      false) + ',"Prize5Taken": ' + (prizeCards[4]?.Taken ??
+      false) + ',"Prize6Taken": ' + (prizeCards[5]?.Taken ??
+      false) + "}"; 
 
     let sendToTwitchRequst = {
       method: "POST",
@@ -334,19 +334,19 @@ function TakePrizeCard(prizeCard, position) {
     let myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
     var raw =
-      '{ "Prize1": "' + prizeCards[0]?.Image ??
-      "images/cardBack.png" + '","Prize2": "' + prizeCards[1]?.Image ??
-      "images/cardBack.png" + '","Prize3": "' + prizeCards[2]?.Image ??
-      "images/cardBack.png" + '","Prize4": "' + prizeCards[3]?.Image ??
-      "images/cardBack.png" + '","Prize5": "' + prizeCards[4]?.Image ??
-      "images/cardBack.png" + '","Prize6": "' + prizeCards[5]?.Image ??
-      "images/cardBack.png" + '","Prize1Taken": ' + prizeCards[0]?.Taken ??
-      false + ',"Prize2Taken": ' + prizeCards[1]?.Taken ??
-      false + ',"Prize3Taken": ' + prizeCards[2]?.Taken ??
-      false + ',"Prize4Taken": ' + prizeCards[3]?.Taken ??
-      false + ',"Prize5Taken": ' + prizeCards[4]?.Taken ??
-      false + ',"Prize6Taken": ' + prizeCards[5]?.Taken ??
-      false + "}";
+      '{ "Prize1": "' + (prizeCards[0]?.Image ??
+      "images/cardBack.png") + '","Prize2": "' + (prizeCards[1]?.Image ??
+      "images/cardBack.png") + '","Prize3": "' + (prizeCards[2]?.Image ??
+      "images/cardBack.png") + '","Prize4": "' + (prizeCards[3]?.Image ??
+      "images/cardBack.png") + '","Prize5": "' + (prizeCards[4]?.Image ??
+      "images/cardBack.png")+ '","Prize6": "' + (prizeCards[5]?.Image ??
+      "images/cardBack.png") + '","Prize1Taken": ' + (prizeCards[0]?.Taken ??
+      false) + ',"Prize2Taken": ' + (prizeCards[1]?.Taken ??
+      false) + ',"Prize3Taken": ' + (prizeCards[2]?.Taken ??
+      false) + ',"Prize4Taken": ' + (prizeCards[3]?.Taken ??
+      false) + ',"Prize5Taken": ' + (prizeCards[4]?.Taken ??
+      false) + ',"Prize6Taken": ' + (prizeCards[5]?.Taken ??
+      false) + "}"; 
 
     let sendToTwitchRequst = {
       method: "POST",
