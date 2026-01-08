@@ -43,7 +43,9 @@ let prizeTable;
 let setViewTable;
 let prizedCards = [];
 let blankImageLocation = "./images/default-card-image.png";
-let apiUrl = "https://pkmntcgapi-production.up.railway.app";
+let apiUrl = "https://localhost:5001";
+let defaultCardBackUrl =
+  "https://pkmn-tcg-api-images.sfo2.cdn.digitaloceanspaces.com/!Logos/default-card-image.png";
 let allSets = [];
 let deckWizardCopy = "";
 let deckWizardMetaGameUrl = "";
@@ -288,35 +290,23 @@ function SetPrizeCards(card, cardAmountSpan) {
     return;
   }
 
-  if (token && prizeCards.length == 6) {
+  if (token) {
     let myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
     var raw =
-      '{ "Prize1": "' +
-      prizeCards[0].Image +
-      '","Prize2": "' +
-      prizeCards[1].Image +
-      '","Prize3": "' +
-      prizeCards[2].Image +
-      '","Prize4": "' +
-      prizeCards[3].Image +
-      '","Prize5": "' +
-      prizeCards[4].Image +
-      '","Prize6": "' +
-      prizeCards[5].Image +
-      '","Prize1Taken": ' +
-      prizeCards[0].Taken +
-      ',"Prize2Taken": ' +
-      prizeCards[1].Taken +
-      ',"Prize3Taken": ' +
-      prizeCards[2].Taken +
-      ',"Prize4Taken": ' +
-      prizeCards[3].Taken +
-      ',"Prize5Taken": ' +
-      prizeCards[4].Taken +
-      ',"Prize6Taken": ' +
-      prizeCards[5].Taken +
-      "}";
+      '{ "Prize1": "' + prizeCards[0]?.Image ??
+      "images/cardBack.png" + '","Prize2": "' + prizeCards[1]?.Image ??
+      "images/cardBack.png" + '","Prize3": "' + prizeCards[2]?.Image ??
+      "images/cardBack.png" + '","Prize4": "' + prizeCards[3]?.Image ??
+      "images/cardBack.png" + '","Prize5": "' + prizeCards[4]?.Image ??
+      "images/cardBack.png" + '","Prize6": "' + prizeCards[5]?.Image ??
+      "images/cardBack.png" + '","Prize1Taken": ' + prizeCards[0]?.Taken ??
+      false + ',"Prize2Taken": ' + prizeCards[1]?.Taken ??
+      false + ',"Prize3Taken": ' + prizeCards[2]?.Taken ??
+      false + ',"Prize4Taken": ' + prizeCards[3]?.Taken ??
+      false + ',"Prize5Taken": ' + prizeCards[4]?.Taken ??
+      false + ',"Prize6Taken": ' + prizeCards[5]?.Taken ??
+      false + "}";
 
     let sendToTwitchRequst = {
       method: "POST",
@@ -340,35 +330,23 @@ function TakePrizeCard(prizeCard, position) {
     prizeCards[position - 1].Taken = true;
   }
 
-  if (token && prizeCards.length == 6) {
+  if (token) {
     let myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
     var raw =
-      '{ "Prize1": "' +
-      prizeCards[0].Image +
-      '","Prize2": "' +
-      prizeCards[1].Image +
-      '","Prize3": "' +
-      prizeCards[2].Image +
-      '","Prize4": "' +
-      prizeCards[3].Image +
-      '","Prize5": "' +
-      prizeCards[4].Image +
-      '","Prize6": "' +
-      prizeCards[5].Image +
-      '","Prize1Taken": ' +
-      prizeCards[0].Taken +
-      ',"Prize2Taken": ' +
-      prizeCards[1].Taken +
-      ',"Prize3Taken": ' +
-      prizeCards[2].Taken +
-      ',"Prize4Taken": ' +
-      prizeCards[3].Taken +
-      ',"Prize5Taken": ' +
-      prizeCards[4].Taken +
-      ',"Prize6Taken": ' +
-      prizeCards[5].Taken +
-      "}";
+      '{ "Prize1": "' + prizeCards[0]?.Image ??
+      "images/cardBack.png" + '","Prize2": "' + prizeCards[1]?.Image ??
+      "images/cardBack.png" + '","Prize3": "' + prizeCards[2]?.Image ??
+      "images/cardBack.png" + '","Prize4": "' + prizeCards[3]?.Image ??
+      "images/cardBack.png" + '","Prize5": "' + prizeCards[4]?.Image ??
+      "images/cardBack.png" + '","Prize6": "' + prizeCards[5]?.Image ??
+      "images/cardBack.png" + '","Prize1Taken": ' + prizeCards[0]?.Taken ??
+      false + ',"Prize2Taken": ' + prizeCards[1]?.Taken ??
+      false + ',"Prize3Taken": ' + prizeCards[2]?.Taken ??
+      false + ',"Prize4Taken": ' + prizeCards[3]?.Taken ??
+      false + ',"Prize5Taken": ' + prizeCards[4]?.Taken ??
+      false + ',"Prize6Taken": ' + prizeCards[5]?.Taken ??
+      false + "}";
 
     let sendToTwitchRequst = {
       method: "POST",
