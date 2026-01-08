@@ -43,7 +43,7 @@ let prizeTable;
 let setViewTable;
 let prizedCards = [];
 let blankImageLocation = "./images/default-card-image.png";
-let apiUrl = "https://localhost:5001";
+let apiUrl = "https://pkmntcgapi-production.up.railway.app";
 let defaultCardBackUrl =
   "https://pkmn-tcg-api-images.sfo2.cdn.digitaloceanspaces.com/!Logos/default-card-image.png";
 let allSets = [];
