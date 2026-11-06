@@ -186,6 +186,24 @@
       border-style: solid;
     }
 
+    .prizeCardContainer {
+      height: 225px;
+      position: relative;
+      width: 150px;
+    }
+
+    .prizeCardName {
+      background-color: black;
+      color: white;
+      left: 0;
+      pointer-events: none;
+      position: absolute;
+      text-align: center;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 100%;
+    }
+
     .opaque{
       opacity: 15%;
     }

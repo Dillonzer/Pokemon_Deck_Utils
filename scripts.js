@@ -16,6 +16,7 @@ function Card(name, set, number, imageLink, deckCount) {
 
 function PrizeCard(image, taken, position) {
   this.Image = image;
+  this.Name = "";
   this.Taken = taken;
   this.Position = position;
 }
@@ -122,11 +123,11 @@ function ReplaceEnergySymbols(decklist) {
   decklist = decklist.replaceAll("Unit Energy {L}{P}{M}", "Unit Energy LPM");
   decklist = decklist.replaceAll(
     "Blend Energy {G} {R} {P} {D}",
-    "Blend Energy GRPD"
+    "Blend Energy GRPD",
   );
   decklist = decklist.replaceAll(
     "Blend Energy {W} {L} {F} {M}",
-    "Blend Energy WLFM"
+    "Blend Energy WLFM",
   );
   decklist = decklist.replaceAll("{D}", "Darkness");
   decklist = decklist.replaceAll("{G}", "Grass");
@@ -162,7 +163,7 @@ function CreateDecklistObject(decklistText) {
     };
     fetch(
       apiUrl + "/deckutils/twitchIntegration/upsert/decklist/" + twitchUser.id,
-      sendToTwitchRequst
+      sendToTwitchRequst,
     );
   }
 
@@ -185,8 +186,8 @@ function CreateDecklistObject(decklistText) {
             data["cards"][i].set?.name ?? "unknown",
             data["cards"][i].number,
             data["cards"][i].imageUrlHiRes,
-            data["cards"][i].deckCount
-          )
+            data["cards"][i].deckCount,
+          ),
         );
       }
 
@@ -194,8 +195,8 @@ function CreateDecklistObject(decklistText) {
     })
     .catch((error) =>
       window.alert(
-        "Woops, something went wrong. Contact Dillonzer with your list."
-      )
+        "Woops, something went wrong. Contact Dillonzer with your list.",
+      ),
     );
 }
 
@@ -229,6 +230,8 @@ async function CreatePrizeSelectorTable(decklist) {
       card.ImageLink ==
       "https://pkmn-tcg-api-images.sfo2.cdn.digitaloceanspaces.com/!Logos/ptcgo_cry.png"
     ) {
+      cardNameSpan.onclick = cardImage.onclick;
+      cardNameSpan.style.cursor = "pointer";
       cardDiv.appendChild(cardNameSpan);
     }
     cardDiv.appendChild(cardAmountSpan);
@@ -279,12 +282,20 @@ function SetPrizeCards(card, cardAmountSpan) {
   if (prizeCards.length < 6) {
     let countInDeck = Number(cardAmountSpan.innerHTML) - 1;
     cardAmountSpan.innerHTML = countInDeck;
-    prizeCards.push(
-      new PrizeCard(card.ImageLink, false, prizeCards.length + 1)
-    );
+    let prizeCard = new PrizeCard(card.ImageLink, false, prizeCards.length + 1);
+    if (
+      card.ImageLink ==
+      "https://pkmn-tcg-api-images.sfo2.cdn.digitaloceanspaces.com/!Logos/ptcgo_cry.png"
+    ) {
+      prizeCard.Name = card.Name;
+    }
+    prizeCards.push(prizeCard);
     prizedCards.push(cardAmountSpan);
-    document.getElementsByClassName("prizeCard")[prizeCards.length - 1].src =
-      prizeCards[prizeCards.length - 1]["Image"];
+    let prizePosition = prizeCards.length;
+    document.getElementsByClassName("prizeCard")[prizePosition - 1].src =
+      prizeCard.Image;
+    document.getElementById("prizeCardName" + prizePosition).innerHTML =
+      prizeCard.Name;
   } else {
     alert("Max amount of 6 Prize Cards");
     return;
@@ -294,19 +305,31 @@ function SetPrizeCards(card, cardAmountSpan) {
     let myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
     var raw =
-      '{ "Prize1": "' + (prizeCards[0]?.Image ??
-      "images/cardBack.png") + '","Prize2": "' + (prizeCards[1]?.Image ??
-      "images/cardBack.png") + '","Prize3": "' + (prizeCards[2]?.Image ??
-      "images/cardBack.png") + '","Prize4": "' + (prizeCards[3]?.Image ??
-      "images/cardBack.png") + '","Prize5": "' + (prizeCards[4]?.Image ??
-      "images/cardBack.png")+ '","Prize6": "' + (prizeCards[5]?.Image ??
-      "images/cardBack.png") + '","Prize1Taken": ' + (prizeCards[0]?.Taken ??
-      false) + ',"Prize2Taken": ' + (prizeCards[1]?.Taken ??
-      false) + ',"Prize3Taken": ' + (prizeCards[2]?.Taken ??
-      false) + ',"Prize4Taken": ' + (prizeCards[3]?.Taken ??
-      false) + ',"Prize5Taken": ' + (prizeCards[4]?.Taken ??
-      false) + ',"Prize6Taken": ' + (prizeCards[5]?.Taken ??
-      false) + "}"; 
+      '{ "Prize1": "' +
+      (prizeCards[0]?.Image ?? "images/cardBack.png") +
+      '","Prize2": "' +
+      (prizeCards[1]?.Image ?? "images/cardBack.png") +
+      '","Prize3": "' +
+      (prizeCards[2]?.Image ?? "images/cardBack.png") +
+      '","Prize4": "' +
+      (prizeCards[3]?.Image ?? "images/cardBack.png") +
+      '","Prize5": "' +
+      (prizeCards[4]?.Image ?? "images/cardBack.png") +
+      '","Prize6": "' +
+      (prizeCards[5]?.Image ?? "images/cardBack.png") +
+      '","Prize1Taken": ' +
+      (prizeCards[0]?.Taken ?? false) +
+      ',"Prize2Taken": ' +
+      (prizeCards[1]?.Taken ?? false) +
+      ',"Prize3Taken": ' +
+      (prizeCards[2]?.Taken ?? false) +
+      ',"Prize4Taken": ' +
+      (prizeCards[3]?.Taken ?? false) +
+      ',"Prize5Taken": ' +
+      (prizeCards[4]?.Taken ?? false) +
+      ',"Prize6Taken": ' +
+      (prizeCards[5]?.Taken ?? false) +
+      "}";
 
     let sendToTwitchRequst = {
       method: "POST",
@@ -317,7 +340,7 @@ function SetPrizeCards(card, cardAmountSpan) {
 
     fetch(
       apiUrl + "/deckutils/twitchIntegration/upsert/prizes/" + twitchUser.id,
-      sendToTwitchRequst
+      sendToTwitchRequst,
     );
   }
 }
@@ -334,19 +357,31 @@ function TakePrizeCard(prizeCard, position) {
     let myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
     var raw =
-      '{ "Prize1": "' + (prizeCards[0]?.Image ??
-      "images/cardBack.png") + '","Prize2": "' + (prizeCards[1]?.Image ??
-      "images/cardBack.png") + '","Prize3": "' + (prizeCards[2]?.Image ??
-      "images/cardBack.png") + '","Prize4": "' + (prizeCards[3]?.Image ??
-      "images/cardBack.png") + '","Prize5": "' + (prizeCards[4]?.Image ??
-      "images/cardBack.png")+ '","Prize6": "' + (prizeCards[5]?.Image ??
-      "images/cardBack.png") + '","Prize1Taken": ' + (prizeCards[0]?.Taken ??
-      false) + ',"Prize2Taken": ' + (prizeCards[1]?.Taken ??
-      false) + ',"Prize3Taken": ' + (prizeCards[2]?.Taken ??
-      false) + ',"Prize4Taken": ' + (prizeCards[3]?.Taken ??
-      false) + ',"Prize5Taken": ' + (prizeCards[4]?.Taken ??
-      false) + ',"Prize6Taken": ' + (prizeCards[5]?.Taken ??
-      false) + "}"; 
+      '{ "Prize1": "' +
+      (prizeCards[0]?.Image ?? "images/cardBack.png") +
+      '","Prize2": "' +
+      (prizeCards[1]?.Image ?? "images/cardBack.png") +
+      '","Prize3": "' +
+      (prizeCards[2]?.Image ?? "images/cardBack.png") +
+      '","Prize4": "' +
+      (prizeCards[3]?.Image ?? "images/cardBack.png") +
+      '","Prize5": "' +
+      (prizeCards[4]?.Image ?? "images/cardBack.png") +
+      '","Prize6": "' +
+      (prizeCards[5]?.Image ?? "images/cardBack.png") +
+      '","Prize1Taken": ' +
+      (prizeCards[0]?.Taken ?? false) +
+      ',"Prize2Taken": ' +
+      (prizeCards[1]?.Taken ?? false) +
+      ',"Prize3Taken": ' +
+      (prizeCards[2]?.Taken ?? false) +
+      ',"Prize4Taken": ' +
+      (prizeCards[3]?.Taken ?? false) +
+      ',"Prize5Taken": ' +
+      (prizeCards[4]?.Taken ?? false) +
+      ',"Prize6Taken": ' +
+      (prizeCards[5]?.Taken ?? false) +
+      "}";
 
     let sendToTwitchRequst = {
       method: "POST",
@@ -357,7 +392,7 @@ function TakePrizeCard(prizeCard, position) {
 
     fetch(
       apiUrl + "/deckutils/twitchIntegration/upsert/prizes/" + twitchUser.id,
-      sendToTwitchRequst
+      sendToTwitchRequst,
     );
   }
 }
@@ -368,6 +403,9 @@ function ResetPrizeCards() {
   for (let prize of document.getElementsByClassName("prizeCard")) {
     prize.src = blankImageLocation;
     prize.classList.remove("opaque");
+  }
+  for (let prizeName of document.getElementsByClassName("prizeCardName")) {
+    prizeName.innerHTML = "";
   }
 
   if (token) {
@@ -385,7 +423,7 @@ function ResetPrizeCards() {
 
     fetch(
       apiUrl + "/deckutils/twitchIntegration/upsert/prizes/" + twitchUser.id,
-      sendToTwitchRequst
+      sendToTwitchRequst,
     );
   }
 }
@@ -400,6 +438,8 @@ function returnLastPrize() {
     prizedCards.pop().innerHTML++;
     document.getElementsByClassName("prizeCard")[prizeCards.length].src =
       blankImageLocation;
+    document.getElementById("prizeCardName" + (prizeCards.length + 1)).innerHTML =
+      "";
     document
       .getElementsByClassName("prizeCard")
       [prizeCards.length].classList.remove("opaque");
@@ -427,7 +467,7 @@ function returnPrizeCards() {
 
     fetch(
       apiUrl + "/deckutils/twitchIntegration/upsert/prizes/" + twitchUser.id,
-      sendToTwitchRequst
+      sendToTwitchRequst,
     );
   }
 }
@@ -435,7 +475,7 @@ function returnPrizeCards() {
 function hideListInputMenu() {
   let mainBody = document.getElementById("mainBody");
   let showHideListInputLabel = document.getElementById(
-    "showHideListInputLabel"
+    "showHideListInputLabel",
   );
 
   if (showHideListInputLabel.innerHTML == "SHOW") {
@@ -463,16 +503,19 @@ function ResetThisPrizeCard(position) {
   for (let i = position - 1; i < 6; i++) {
     if (i + 1 == 6) {
       document.getElementsByClassName("prizeCard")[i].src = blankImageLocation;
+      document.getElementById("prizeCardName" + (i + 1)).innerHTML = "";
     } else {
       document.getElementsByClassName("prizeCard")[i].src =
         document.getElementsByClassName("prizeCard")[i + 1].src;
+      document.getElementById("prizeCardName" + (i + 1)).innerHTML =
+        prizeCards[i]?.Name ?? "";
     }
   }
 }
 
 function LogIntoTwitch() {
   window.open(
-    "https://id.twitch.tv/oauth2/authorize?response_type=token&client_id=ygoejvo56l7d6jrhsmvlix7ejv00nc&redirect_uri=https://dillonzer.github.io/Pokemon_Deck_Utils/prizetracker.html&scope=user:read:email"
+    "https://id.twitch.tv/oauth2/authorize?response_type=token&client_id=ygoejvo56l7d6jrhsmvlix7ejv00nc&redirect_uri=https://dillonzer.github.io/Pokemon_Deck_Utils/prizetracker.html&scope=user:read:email",
   );
 }
 
@@ -567,7 +610,7 @@ function LoadDeckForPrizeTracker(decklist) {
 
 function DeleteDeckFromLocalStorage() {
   var newArray = prizedeckLists.filter(
-    (item) => item.Name !== document.getElementById("decklistName").value
+    (item) => item.Name !== document.getElementById("decklistName").value,
   );
   prizedeckLists = newArray;
   localStorage.setItem("prizecardDecks", JSON.stringify(prizedeckLists));
@@ -593,20 +636,20 @@ function GetAllSets() {
             data[index].name,
             data[index].code,
             data[index].ptcgoCode,
-            data[index].releaseDate
-          )
+            data[index].releaseDate,
+          ),
         );
       }
 
       var setSelect = document.getElementById("setName");
       var sortedSets = allSets.sort(
-        (a, b) => Date.parse(b.ReleaseDate) - Date.parse(a.ReleaseDate)
+        (a, b) => Date.parse(b.ReleaseDate) - Date.parse(a.ReleaseDate),
       );
 
       for (var i = 0; i < sortedSets.length; i++) {
         setSelect.options[setSelect.options.length] = new Option(
           sortedSets[i].Name + " (" + sortedSets[i].PTCGO_Code + ")",
-          sortedSets[i].Name
+          sortedSets[i].Name,
         );
       }
     })
@@ -633,8 +676,8 @@ async function createAllSetTable(setName) {
               data[index].name,
               data[index].set.name,
               data[index].number,
-              data[index].imageUrlHiRes
-            )
+              data[index].imageUrlHiRes,
+            ),
           );
         }
       }
@@ -817,8 +860,8 @@ function GetAllCards() {
             data[index].set.ptcgoCode,
             data[index].number,
             data[index].imageUrlHiRes,
-            0
-          )
+            0,
+          ),
         );
       }
 
@@ -850,20 +893,20 @@ function GetAllSetsButSetCode() {
             data[index].name,
             data[index].code,
             data[index].ptcgoCode,
-            data[index].releaseDate
-          )
+            data[index].releaseDate,
+          ),
         );
       }
 
       var setSelect = document.getElementById("setName");
       var sortedSets = allSets.sort(
-        (a, b) => Date.parse(b.ReleaseDate) - Date.parse(a.ReleaseDate)
+        (a, b) => Date.parse(b.ReleaseDate) - Date.parse(a.ReleaseDate),
       );
 
       for (var i = 0; i < sortedSets.length; i++) {
         setSelect.options[setSelect.options.length] = new Option(
           sortedSets[i].Name + " (" + sortedSets[i].PTCGO_Code + ")",
-          sortedSets[i].PTCGO_Code
+          sortedSets[i].PTCGO_Code,
         );
       }
     })
@@ -881,13 +924,13 @@ function GetCardsInSet() {
   var cardSelect = document.getElementById("cardName");
   var cardsInSet = allCards.filter((cards) => cards.Set === setCode);
   var sortedCardsInSet = cardsInSet.sort((a, b) =>
-    a.Name > b.Name ? 1 : b.Name > a.Name ? -1 : 0
+    a.Name > b.Name ? 1 : b.Name > a.Name ? -1 : 0,
   );
   cardSelect.options.length = 0;
   for (let i = 0; i < sortedCardsInSet.length; i++) {
     cardSelect.options[cardSelect.options.length] = new Option(
       sortedCardsInSet[i].Name + " (" + sortedCardsInSet[i].Number + ")",
-      sortedCardsInSet[i].ImageLink
+      sortedCardsInSet[i].ImageLink,
     );
   }
 
@@ -913,11 +956,11 @@ function DisplayAllCardsForStreamViewer() {
     cardsInSet = allCards.filter((cards) => cards.Name.toLowerCase() == "n");
   } else if (searchName.length >= 3) {
     cardsInSet = allCards.filter((cards) =>
-      cards.Name.toLowerCase().includes(searchName.toLowerCase())
+      cards.Name.toLowerCase().includes(searchName.toLowerCase()),
     );
   } else {
     alert(
-      "Please enter more than 3 characters when searching for a card. \nExceptions:\n- N"
+      "Please enter more than 3 characters when searching for a card. \nExceptions:\n- N",
     );
     return;
   }
@@ -1099,7 +1142,7 @@ function SendToTwitch() {
             "Error sending to Twitch. Incorrect GUID. If you believe this is incorrect please contact Dillon.";
         } else if (recent.checked) {
           document.getElementById(
-            "sentToTwitchCenterScreenRecentView"
+            "sentToTwitchCenterScreenRecentView",
           ).innerHTML =
             "Error sending to Twitch. Incorrect GUID. If you believe this is incorrect please contact Dillon.";
         }
@@ -1116,7 +1159,7 @@ function SendToTwitch() {
           document.getElementById("sentToTwitch").innerHTML = "Success!";
         } else if (recent.checked) {
           document.getElementById(
-            "sentToTwitchCenterScreenRecentView"
+            "sentToTwitchCenterScreenRecentView",
           ).innerHTML = "Success!";
         }
       }
@@ -1129,7 +1172,7 @@ function SendToTwitch() {
         document.getElementById("sentToTwitch").innerHTML = "Error! " + error;
       } else if (recent.checked) {
         document.getElementById(
-          "sentToTwitchCenterScreenRecentView"
+          "sentToTwitchCenterScreenRecentView",
         ).innerHTML = "Error! " + error;
       }
     });
@@ -1163,7 +1206,7 @@ function DisplayTwitchImage() {
 //#region PTCGBot
 function LogIntoTwitchPTCGBot() {
   window.open(
-    "https://id.twitch.tv/oauth2/authorize?response_type=token&client_id=y0h43wl0lu80blrjygro7rp3dn0ttz&redirect_uri=https://dillonzer.github.io/Pokemon_Deck_Utils/ptcgBot.html&scope=user:read:email"
+    "https://id.twitch.tv/oauth2/authorize?response_type=token&client_id=y0h43wl0lu80blrjygro7rp3dn0ttz&redirect_uri=https://dillonzer.github.io/Pokemon_Deck_Utils/ptcgBot.html&scope=user:read:email",
   );
 }
 
@@ -1207,11 +1250,11 @@ function AddPtcgoBotToChannel() {
     .then((data) => {
       if (data) {
         alert(
-          "You have added PTCGBot to your Twitch channel! It will take a few moments for it to appear. Please remember to give it Moderator status."
+          "You have added PTCGBot to your Twitch channel! It will take a few moments for it to appear. Please remember to give it Moderator status.",
         );
       } else {
         alert(
-          "There was an issue adding PTCGBot to your Twitch channel. Please contact Dillonzer on Twitter or Discord."
+          "There was an issue adding PTCGBot to your Twitch channel. Please contact Dillonzer on Twitter or Discord.",
         );
       }
     })
@@ -1239,11 +1282,11 @@ function RemovePtcgoBotFromChannel() {
     .then((data) => {
       if (data) {
         alert(
-          "You have remove PTCGBot to your Twitch channel! It will take a few moments for it to leave. Please remember to remove it's Moderator status."
+          "You have remove PTCGBot to your Twitch channel! It will take a few moments for it to leave. Please remember to remove it's Moderator status.",
         );
       } else {
         alert(
-          "There was an issue removing PTCGBot from your Twitch channel. Please contact Dillonzer on Twitter or Discord."
+          "There was an issue removing PTCGBot from your Twitch channel. Please contact Dillonzer on Twitter or Discord.",
         );
       }
     })
@@ -1271,11 +1314,11 @@ function AddPtcgoBotFFZToChannel() {
     .then((data) => {
       if (data) {
         alert(
-          "You have enabled FFZ mode for PTCGBot on your Twitch channel! It will take a few moments for it to appear. Please remember to add all the FFZ Emotes"
+          "You have enabled FFZ mode for PTCGBot on your Twitch channel! It will take a few moments for it to appear. Please remember to add all the FFZ Emotes",
         );
       } else {
         alert(
-          "There was an issue enabling FFZ mode for PTCGBot in your Twitch channel. Please contact Dillonzer on Twitter or Discord."
+          "There was an issue enabling FFZ mode for PTCGBot in your Twitch channel. Please contact Dillonzer on Twitter or Discord.",
         );
       }
     })
@@ -1298,7 +1341,7 @@ function RemovePtcgoBotFFZToChannel() {
 
   fetch(
     apiUrl + "/deckutils/ptcgBot/ffz/updateUserList/false",
-    sendToApiRequest
+    sendToApiRequest,
   )
     .then((response) => {
       return response.json();
@@ -1306,11 +1349,11 @@ function RemovePtcgoBotFFZToChannel() {
     .then((data) => {
       if (data) {
         alert(
-          "You have disabled FFZ mode for PTCGBot on your Twitch channel! It will take a few moments for it to disable."
+          "You have disabled FFZ mode for PTCGBot on your Twitch channel! It will take a few moments for it to disable.",
         );
       } else {
         alert(
-          "There was an issue disabling FFZ mode for PTCGBot in your Twitch channel. Please contact Dillonzer on Twitter or Discord."
+          "There was an issue disabling FFZ mode for PTCGBot in your Twitch channel. Please contact Dillonzer on Twitter or Discord.",
         );
       }
     })
@@ -1337,7 +1380,7 @@ function initDooDSubmission() {
 
 function LogIntoTwitchForDood() {
   window.open(
-    "https://id.twitch.tv/oauth2/authorize?response_type=token&client_id=ygoejvo56l7d6jrhsmvlix7ejv00nc&redirect_uri=https://dillonzer.github.io/Pokemon_Deck_Utils/dood/submission.html&scope=user:read:email user:read:subscriptions"
+    "https://id.twitch.tv/oauth2/authorize?response_type=token&client_id=ygoejvo56l7d6jrhsmvlix7ejv00nc&redirect_uri=https://dillonzer.github.io/Pokemon_Deck_Utils/dood/submission.html&scope=user:read:email user:read:subscriptions",
   );
 }
 
@@ -1375,8 +1418,8 @@ function FillInSubmittedDooDDeck(userName) {
           new DooDDeck(
             data[index].twitchUser,
             data[index].decklist,
-            data[index].goFirst
-          )
+            data[index].goFirst,
+          ),
         );
       }
 
@@ -1387,7 +1430,7 @@ function FillInSubmittedDooDDeck(userName) {
             twitchUser.display_name,
             doodDecks[i].Decklist,
             doodDecks[i].GoFirst,
-            false
+            false,
           );
           break;
         }
@@ -1429,14 +1472,14 @@ function SubmitDecklistForDooD() {
             twitchUser.display_name,
             decklistText,
             goFirst,
-            true
+            true,
           );
         }
       })
       .catch((error) =>
         window.alert(
-          "You are not subbed to AzulGG on Twitch. Please sub for access to DooD."
-        )
+          "You are not subbed to AzulGG on Twitch. Please sub for access to DooD.",
+        ),
       );
   });
 }
@@ -1445,7 +1488,7 @@ function CreateDecklistObjectForDooD(
   userName,
   decklistText,
   goFirst,
-  submitToApi
+  submitToApi,
 ) {
   let decklist = new Decklist();
 
@@ -1475,8 +1518,8 @@ function CreateDecklistObjectForDooD(
             data["cards"][i].set["name"],
             data["cards"][i].number,
             data["cards"][i].imageUrlHiRes,
-            data["cards"][i].deckCount
-          )
+            data["cards"][i].deckCount,
+          ),
         );
       }
 
@@ -1495,8 +1538,8 @@ function CreateDecklistObjectForDooD(
     })
     .catch((error) =>
       window.alert(
-        `Woops, something went wrong. Contact Dillonzer with your list: ${error}`
-      )
+        `Woops, something went wrong. Contact Dillonzer with your list: ${error}`,
+      ),
     );
 }
 
@@ -1522,8 +1565,8 @@ function SubmitDooDToAPI(userName, decklist, goFirst) {
     .then((data) => window.alert("Submitted!"))
     .catch((error) =>
       window.alert(
-        `Woops, something went wrong. Contact Dillonzer with your list: ${error}`
-      )
+        `Woops, something went wrong. Contact Dillonzer with your list: ${error}`,
+      ),
     );
 }
 //#endregion
@@ -1546,7 +1589,7 @@ function initDooDAdmin() {
 
 function LogIntoTwitchForDoodAdmin() {
   window.open(
-    "https://id.twitch.tv/oauth2/authorize?response_type=token&client_id=ygoejvo56l7d6jrhsmvlix7ejv00nc&redirect_uri=https://dillonzer.github.io/Pokemon_Deck_Utils/dood/admin.html&scope=user:read:email user:read:subscriptions"
+    "https://id.twitch.tv/oauth2/authorize?response_type=token&client_id=ygoejvo56l7d6jrhsmvlix7ejv00nc&redirect_uri=https://dillonzer.github.io/Pokemon_Deck_Utils/dood/admin.html&scope=user:read:email user:read:subscriptions",
   );
 }
 
@@ -1592,15 +1635,15 @@ function GetAllDooDDecks() {
           new DooDDeck(
             data[index].twitchUser,
             data[index].decklist,
-            data[index].goFirst
-          )
+            data[index].goFirst,
+          ),
         );
       }
 
       for (var i = 0; i < doodDecks.length; i++) {
         decks.options[decks.options.length] = new Option(
           doodDecks[i].TwitchUser,
-          doodDecks[i].Decklist
+          doodDecks[i].Decklist,
         );
       }
     })
@@ -1624,15 +1667,15 @@ function GetAllDooDDecksAfterDelete(deckindex) {
           new DooDDeck(
             data[index].twitchUser,
             data[index].decklist,
-            data[index].goFirst
-          )
+            data[index].goFirst,
+          ),
         );
       }
 
       for (var i = 0; i < doodDecks.length; i++) {
         decks.options[decks.options.length] = new Option(
           doodDecks[i].TwitchUser,
-          doodDecks[i].Decklist
+          doodDecks[i].Decklist,
         );
       }
 
@@ -1713,7 +1756,7 @@ function CreateDecklistObjectAdminDood(decklistText, author) {
               azulgg +
               "/" +
               author,
-            sendToTwitchRequst
+            sendToTwitchRequst,
           );
         }
 
@@ -1736,8 +1779,8 @@ function CreateDecklistObjectAdminDood(decklistText, author) {
                   data["cards"][i].set["name"],
                   data["cards"][i].number,
                   data["cards"][i].imageUrlHiRes,
-                  data["cards"][i].deckCount
-                )
+                  data["cards"][i].deckCount,
+                ),
               );
             }
 
@@ -1745,8 +1788,8 @@ function CreateDecklistObjectAdminDood(decklistText, author) {
           })
           .catch((error) =>
             window.alert(
-              "Woops, something went wrong. Contact Dillonzer with your list."
-            )
+              "Woops, something went wrong. Contact Dillonzer with your list.",
+            ),
           );
       } catch (error) {
         window.alert("Error loading low rarity decklist: " + error);
@@ -1831,7 +1874,7 @@ function GetLowRarityList(decklist) {
         navigator.clipboard.writeText(result);
       } catch (error) {
         window.alert(
-          "Error writing low rarity decklist to clipboard: " + error
+          "Error writing low rarity decklist to clipboard: " + error,
         );
       }
     })
